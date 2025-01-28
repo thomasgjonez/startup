@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Game</title>
+  <h1 class="GameTitle" id="NavigationTitle">CatchPhrase</h1>
+  <nav class="Navigation">
+    <ol>
+        <button onclick="location.href='Index.html'" class="Nav-button">Home</button>
+        <button onclick="location.href='Game.html'" class="Nav-button">Game</button>
+        <button onclick="location.href='Rules.html'" class="Nav-button">Rules</button>
+    </ol>
+  </nav>
+</head>
+<body>
+    <!-- Team One Section/leftside-->
+    <section>
+        <h2 class="Team" id="Team-one"> Team One</h2>
+        <table class="Team-table">
+            <thead>
+                <tr>
+                    <td >UserName </td>
+                    <td >Turn </td>
+                    <td >Word person guessed</td>
+                </tr>
+            </thead>
+            <tr>
+                    <td id="UserName">Johnsmith_1 *pulled from Database*</td>
+                    <td id="Turn"> Your turn *Websocket data*</td>
+                    <td id="UserNameWordGuessed"> N/A Websocket data</td>
+            </tr>
+        </table>
+    </section>
+    <!-- Team One Section/ middle-->
+    <section>
+        <h2> Room Code</h2>
+        <!-- Form to enter room code, Will need to add code later on to make this functional -->
+        <!-- Database placeholder for room code should go here-->
+            <form action="#" method="POST">
+                <label for="room-code">Room Code:</label>
+                <input type="text" id="room-code" value="1234567" placeholder="Enter your room code">
+                <button type="submit">Submit</button>
+            </form>
+            <!-- Database and API for dictionary to display a word should go here-->
+            <form action="#" method="POST">
+                <label for="guess-word">Guess Word: </label>
+                <input type="text" id="game-word" value="BasketBall" placeholder="Guess the Word">
+                <button type="submit">Submit</button>
+            </form>
+            <input type="text" id="input/output-box" value="This is an orange object you play a sport with"placerholder="Provide description of displayed word">
+            <h2>Board</h2>
+            <img src="game-pieces/catchphraseboard.png" alt="Board">
+            <div>
+                <!--Will need method to move this piece-->
+                <img src="game-pieces/bluepiece.png" alt="bluepiece">
+            </div>
+            <div>
+                <!--Will need method to move this piece-->
+                <img src="game-pieces/greenpiece.png" alt="greenpiece">
+            </div>
+            <!-- Websocket for live chat should go here-->
+            <h2>Live Chat</h2>
+                <!-- Display chat messages -->
+                <div class="chatBox">
+                    <p>basic box which will display chat from Websocket</p>
+                </div>
+
+                <!-- Message input and send button -->
+                <input type="text" id="messageInput" placeholder="Type a message">
+                <button id="sendMessageButton">Send</button>
+    </section>
+    <!-- Team Two Section/Rightside-->
+    <section>
+        <h2 class="Team" id="Team-two"> Team Two </h2>
+        <table class="Team-table">
+            <thead>
+                <tr>
+                    <td>UserName</td>
+                    <td>Turn</td>
+                    <td>Word person guessed</td>
+                </tr>
+            </thead>
+            <tr>
+                <td id="UserName">Johnsmith_15 *pulled from Database*</td>
+                <td id="Turn"> Not Yet *Websocket data*</td>
+                <td id="UserNameWordGuessed"> banana *Websocket data</td>
+            </tr>
+        </table>
+    </section>
+
+  <footer>
+  </footer>
+</body>
+</html>
