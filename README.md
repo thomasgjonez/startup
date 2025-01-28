@@ -103,15 +103,15 @@ For this deliverable I did the following. I checked the box `[x]` and added a de
 
 For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
 
-- [ ] **HTML pages** - I did not complete this part of the deliverable.
-- [ ] **Proper HTML element usage** - I did not complete this part of the deliverable.
-- [ ] **Links** - I did not complete this part of the deliverable.
-- [ ] **Text** - I did not complete this part of the deliverable.
-- [ ] **3rd party API placeholder** - I did not complete this part of the deliverable.
-- [ ] **Images** - I did not complete this part of the deliverable.
-- [ ] **Login placeholder** - I did not complete this part of the deliverable.
-- [ ] **DB data placeholder** - I did not complete this part of the deliverable.
-- [ ] **WebSocket placeholder** - I did not complete this part of the deliverable.
+- [x] **HTML pages** - 4 pages for each of the different functions of my website. Names are self-explanatory and index is the homepage
+- [x] **Proper HTML element usage** - Mainly used headers, tables, divs, and paragraphs with general classes and unique ids to separate my content, which I will further style with CSS to create more distinction
+- [x] **Links** - I created multiple hrefs for navigation links or links to other places
+- [x] **Text** - I completed this part with various text throughout my site
+- [x] **3rd party API placeholder** - I explicitly commetted in both text and comments on where my apis will go 
+- [x] **Images** - I inserted images using img src method, images are uploaded to my repo
+- [x] **Login placeholder** - There are sign in boxes and a submit button
+- [x] **DB data placeholder** - There are tables that will eventually pull out your information like username
+- [x] **WebSocket placeholder** - There is a live chat box with a placeholder for the websocket.
 
 ## 🚀 CSS deliverable
 
