@@ -1,0 +1,17 @@
+.mainPageBody {
+    display: flex;
+    height: 100vh; /* Full height of the viewport */
+}
+
+.left, .right {
+    flex: 1; /* Each takes up 50% of the width */
+    height: 100%;
+}
+
+.left {
+    background-color: lightblue;
+}
+
+.right {
+    background-color: lightcoral;
+}

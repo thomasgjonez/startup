@@ -4,16 +4,19 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Game</title>
-  <h1 class="GameTitle" id="NavigationTitle">CatchPhrase</h1>
-  <nav class="Navigation">
-    <ol>
-        <button onclick="location.href='Index.html'" class="Nav-button">Home</button>
-        <button onclick="location.href='Game.html'" class="Nav-button">Game</button>
-        <button onclick="location.href='Rules.html'" class="Nav-button">Rules</button>
-    </ol>
-  </nav>
 </head>
 <body>
+    <header>
+        <h1 class="GameTitle" id="NavigationTitle">CatchPhrase</h1>
+        <nav class="Navigation">
+            <ol>
+                <button onclick="location.href='Index.html'" class="Nav-button">Home</button>
+                <button onclick="location.href='Game.html'" class="Nav-button">Game</button>
+                <button onclick="location.href='Rules.html'" class="Nav-button">Rules</button>
+            </ol>
+        </nav>
+    </header>
+</main>
     <!-- Team One Section/leftside-->
     <section>
         <h2 class="Team" id="Team-one"> Team One</h2>
@@ -59,16 +62,6 @@
                 <!--Will need method to move this piece-->
                 <img src="game-pieces/greenpiece.png" alt="greenpiece">
             </div>
-            <!-- Websocket for live chat should go here-->
-            <h2>Live Chat</h2>
-                <!-- Display chat messages -->
-                <div class="chatBox">
-                    <p>basic box which will display chat from Websocket</p>
-                </div>
-
-                <!-- Message input and send button -->
-                <input type="text" id="messageInput" placeholder="Type a message">
-                <button id="sendMessageButton">Send</button>
     </section>
     <!-- Team Two Section/Rightside-->
     <section>
@@ -88,8 +81,19 @@
             </tr>
         </table>
     </section>
+</main>
 
   <footer>
+    <!-- Websocket for live chat should go here-->
+    <h2>Live Chat</h2>
+    <!-- Display chat messages -->
+    <div class="chatBox">
+        <p>basic box which will display chat from Websocket</p>
+    </div>
+
+    <!-- Message input and send button -->
+    <input type="text" id="messageInput" placeholder="Type a message">
+    <button id="sendMessageButton">Send</button>
   </footer>
 </body>
 </html>
