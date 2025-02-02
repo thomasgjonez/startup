@@ -1,0 +1,94 @@
+.GameTitle{
+    font-family: "Anton";
+    font-weight: bold;
+}
+
+.Navigation .btn {
+    font-size: 1rem;
+    padding: 8px 16px;
+    background-color: lightblue;
+    
+}
+.Navigation .btn:hover{
+    background-color: gray;
+}
+.Navigation .UserName{
+    color: lightcoral;
+}
+
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+th, td {
+    padding: 12px;
+    text-align: center;
+    border: 2px solid #ccc;
+}
+
+/* Team One Styles */
+#Team-one{
+    color:#0071bc;
+}
+.team-one {
+    background-color: #f0f8ff;  
+    border: 3px solid #0071bc;
+}
+
+.team-one th {
+    background-color: #0071bc;
+    color: white;
+}
+
+.team-one tbody tr:nth-child(even) {
+    background-color: #e6f7ff;  
+}
+
+
+/* Team Two Styles */
+#Team-two{
+    color: #039246;
+}
+.team-two {
+    background-color: #e9f7e9;  
+    border: 3px solid #039246  
+}
+
+.team-two th {
+    background-color: #039246;  
+    color: white;
+}
+
+.team-two tbody tr:nth-child(even) {
+    background-color: #f1f9f1;  
+}
+
+.board-container {
+  position: relative; 
+  display: inline-block; 
+}
+
+.board {
+  width: 100%; 
+  height: auto; 
+}
+
+.game-piece {
+  position: absolute; 
+  width: 50px; 
+  height: auto;
+}
+
+.blue-piece {
+  top: 2.5px;  /* from top */
+  left: 25px; /* from lef */
+}
+
+.green-piece {
+  top: 15px; 
+  left: 75px; 
+}
