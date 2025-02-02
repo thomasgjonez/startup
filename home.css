@@ -1,17 +1,87 @@
+.main {
+    margin: 0;
+    padding: 0;
+}
+
+
 .mainPageBody {
     display: flex;
-    height: 100vh; /* Full height of the viewport */
+    height: 100vh; 
+    justify-content: center;
+    align-items: center;
 }
 
 .left, .right {
-    flex: 1; /* Each takes up 50% of the width */
+    flex: 1; 
     height: 100%;
+    display: flex;
+    justify-content: center;
+    padding-left: 2rem;
 }
 
 .left {
-    background-color: lightblue;
+    flex-direction: column;
+    background-color: black;
+    text-align: left;
+    font-weight: bold;
+    color: white;
+}
+.GameTitle{
+    font-family: "Anton", serif;
+    font-size: 10vw;
+    padding-top: 0;
+    padding-bottom: 0;
+    
+}
+
+.Slogan{
+    font-size: 1.5vw;
+    margin-top: 10px;
 }
 
 .right {
-    background-color: lightcoral;
+    background-color: white;
+    align-items: center;
+    justify-content: left;
 }
+.login-box {
+    width: 60%;
+    max-width: 400px;
+    text-align: center;
+    
+}
+
+.login-box h2 {
+    font-size: 2em;
+    
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    margin-top: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+
+}
+
+button {
+    width: 100%;
+    padding: 10px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    margin-top: 10px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+
+
+
+
+
