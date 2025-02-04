@@ -1,0 +1,17 @@
+.GameTitle{
+    font-family: "Anton";
+    font-weight: bold;
+}
+
+.Navigation .btn {
+    font-size: 1rem;
+    padding: 8px 16px;
+    background-color: lightblue;
+    
+}
+.Navigation .btn:hover{
+    background-color: gray;
+}
+.Navigation .UserName{
+    color: lightcoral;
+}
