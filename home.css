@@ -59,9 +59,6 @@
     font-size: 2vw;
     
 }
-form .form-group {
-    margin-bottom: 20px; /* Add space between input fields */
-}
 
 input {
     width: 100%;
