@@ -117,12 +117,12 @@ For this deliverable I did the following. I checked the box `[x]` and added a de
 
 For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
 
-- [ ] **Header, footer, and main content body** - I did not complete this part of the deliverable.
-- [ ] **Navigation elements** - I did not complete this part of the deliverable.
-- [ ] **Responsive to window resizing** - I did not complete this part of the deliverable.
-- [ ] **Application elements** - I did not complete this part of the deliverable.
-- [ ] **Application text content** - I did not complete this part of the deliverable.
-- [ ] **Application images** - I did not complete this part of the deliverable.
+- [x] **Header, footer, and main content body** - Header contains the webnavigation, and Footer contains the live chat, which are styled accordling on the game page. The other pages I didn't need to use header or footer. Main contains most of my styling, which I organized with bootstrap and overided with CSS when needed.
+- [x] **Navigation elements** - Navigation has been given a background color along with "buttons" that are gray and change color as you hover over them. Also added a section for your Username to show up.
+- [x] **Responsive to window resizing** - I mainly used bootstrap to organize the layout of my pages, which meant that I could resize easily. You'll notice that the "column" sectionns of the page switch their orientation as you make your window smaller.
+- [x] **Application elements** - I used bootstrap for the basics and overrided with some css for various elements in my website such as headers, paragraphs, buttons, and tables. Tables especially took me a while to figure out how to properly style them with alternating colors for various rows.
+- [x] **Application text content** - I changed the font, color, size, and if it was bold depending on what the text contained and where it was located. I even imported a font called Anton for my Catchphrase title.
+- [x] **Application images** - The main thing I did with this was layer the board pieces on top of the actual game board and position them in a nice way, which took a long time to get right. A lot of pixel incrementing. 
 
 ## 🚀 React part 1: Routing deliverable
 
