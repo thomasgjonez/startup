@@ -1,3 +1,8 @@
+.custom-header {
+    background-color: #f4b71d;
+    color: White;
+}
+
 .GameTitle{
     font-family: "Anton";
     font-weight: bold;
@@ -6,12 +11,12 @@
 .Navigation .btn {
     font-size: 1rem;
     padding: 8px 16px;
-    background-color: lightblue;
+    background-color: white;;
     
 }
 .Navigation .btn:hover{
-    background-color: gray;
+    background-color: #d96a04;
 }
 .Navigation .UserName{
-    color: lightcoral;
+    color: black;
 }

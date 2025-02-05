@@ -24,7 +24,7 @@
 
 .left {
     flex-direction: column;
-    background-color: black;
+    background-color: #f4b71d;
     text-align: left;
     font-weight: bold;
     color: white;
