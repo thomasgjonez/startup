@@ -66,17 +66,17 @@ export function Game() {
 
           <div className="board-container">
             <img
-              src="game-pieces/catchphraseboard.png"
+              src="/game-pieces/catchphraseboard.png"
               alt="Board"
               className="board"
             />
             <img
-              src="game-pieces/bluepiece.png"
+              src="/game-pieces/bluepiece.png"
               alt="Blue Piece"
               className="game-piece blue-piece"
             />
             <img
-              src="game-pieces/greenpiece.png"
+              src="/game-pieces/greenpiece.png"
               alt="Green Piece"
               className="game-piece green-piece"
             />
