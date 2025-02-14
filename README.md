@@ -128,10 +128,9 @@ For this deliverable I did the following. I checked the box `[x]` and added a de
 
 For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
 
-- [ ] **Bundled using Vite** - I did not complete this part of the deliverable.
-- [ ] **Components** - I did not complete this part of the deliverable.
-- [ ] **Router** - Routing between login and voting components.
-
+- [x] **Bundled using Vite** - I completed this part by downloading vite and adjusting the package.json file
+- [x] **Components** - I made several components that are all found under the /src/pages, such as login, create-account, game, and rules, which will load in after their respective navlink is pressed or when your browser is routed there. Also there are the header(navigation links) and footer(live chat) components which was a little bit tricker as I only wanted the header and footer to appear in certain pages so I had to get a little creative with nested routing and making two layout jsx files called HomeLayout(for login and create-account) and MainLayout(for game and rules).
+- [x] **Router** - Like I said before I did some research and found a solution to having the two layouts, which included some nested routing. Basically everything is wrapped in the BowserRouter then I have a router for both HomeLayout and MainLayout(probably should change the names lol). These act like parent routers, which then have routers within to get various components, inheriting the formats as their parents and thus achieving two formats of the website.
 ## 🚀 React part 2: Reactivity
 
 For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
