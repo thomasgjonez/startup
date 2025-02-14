@@ -5,6 +5,7 @@ import "./main.css"
 
 export default function MainLayout() {
   return (
+    
     <div className="vh-100 d-flex flex-column">
       <header className="custom-header p-3">
         <div className="container-fluid d-flex justify-content-between align-items-center">
@@ -20,7 +21,9 @@ export default function MainLayout() {
         </div>
       </header>
 
-      <Outlet />
+      <main className="flex-grow-1 d-flex">
+        <Outlet />
+      </main>
 
       <footer className="text-center py-3 bg-light">
         <h2>Live Chat</h2>
