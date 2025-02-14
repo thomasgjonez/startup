@@ -1,5 +1,5 @@
 import React from 'react';
-import './rules.css';
+
 
 export function Rules() {
   return (

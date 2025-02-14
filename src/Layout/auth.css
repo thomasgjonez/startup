@@ -1,4 +1,4 @@
-.main {
+.home-layout .main {
     border: none;  
     padding: 0;    
     margin: 0; 
@@ -7,14 +7,14 @@
 }
 
 
-.mainPageBody {
+.home-layout .mainPageBody {
     display: flex;
     height: 100vh; 
     justify-content: center;
     align-items: center;
 }
 
-.left, .right {
+.home-layout .left, .right {
     flex: 1; 
     height: 100%;
     display: flex;
@@ -22,14 +22,14 @@
     padding-left: 2rem;
 }
 
-.left {
+.home-layout .left {
     flex-direction: column;
     background-color: #f4b71d;
     text-align: left;
     font-weight: bold;
     color: white;
 }
-.GameTitle{
+.home-layout .GameTitle{
     font-family: "Anton", serif;
     font-size: 10vw;
     padding-top: 0;
@@ -37,17 +37,17 @@
     
 }
 
-.Slogan{
+.home-layout .Slogan{
     font-size: 1.5vw;
     margin-top: 10px;
 }
 
-.right {
+.home-layout .right {
     background-color: white;
     align-items: center;
     justify-content: left;
 }
-.login-box {
+.home-layout .login-box {
     width: 60%;
     max-width: 500px;
     text-align: center;
@@ -55,12 +55,12 @@
     
 }
 
-.login-box h2 {
+.home-layout .login-box h2 {
     font-size: 2vw;
     
 }
 
-input {
+.home-layout input {
     width: 100%;
     padding: 10px;
     margin-top: 10px;
@@ -69,7 +69,7 @@ input {
 
 }
 
-button {
+.home-layout button {
     width: 100%;
     padding: 10px;
     background-color: #007bff;
@@ -80,6 +80,6 @@ button {
     cursor: pointer;
 }
 
-button:hover {
+.home-layout button:hover {
     background-color: #0056b3;
 }

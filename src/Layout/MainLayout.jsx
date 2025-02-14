@@ -11,7 +11,7 @@ export default function MainLayout() {
           <h1 className="GameTitle">CatchPhrase</h1>
           <nav className="Navigation">
             <div className="d-flex gap-3">
-              <NavLink to="/home" className="btn">Home</NavLink>
+              <NavLink to="/" className="btn">Home</NavLink>
               <NavLink to="/game" className="btn">Game</NavLink>
               <NavLink to="/rules" className="btn">Rules</NavLink>
               <h3 className="UserName">UserName</h3>
@@ -20,7 +20,7 @@ export default function MainLayout() {
         </div>
       </header>
 
-      <Outlet /> {/* This is where the page content will be inserted */}
+      <Outlet />
 
       <footer className="text-center py-3 bg-light">
         <h2>Live Chat</h2>

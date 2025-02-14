@@ -18,10 +18,10 @@ export function CreateAccount() {
           <label htmlFor="signup-password">Password</label>
           <input type="password" id="signup-password" placeholder="Enter your password: " />
         </div>
-        <button className="btn btn-primary w-100 mt-2" type="submit">Sign Up</button>
+        <button className="btn btn-primary w-100" type="submit">Sign Up</button>
       </form>
       <p className="mt-3">
-        Already have an account? <NavLink to="/home/login" id="switch-to-login">Log in here</NavLink>
+        Already have an account? <NavLink to="/login" id="switch-to-login">Log in here</NavLink>
       </p>
     </div>
   );
