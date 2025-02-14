@@ -2,7 +2,7 @@ import React from 'react';
 import "./home.css"
 import { Outlet } from 'react-router-dom';
 
-export function Home() {
+export function HomeLayout() {
 
   return (
     <div className="home-layout">
@@ -16,7 +16,7 @@ export function Home() {
     
         
         <div className="right col-md-6 d-flex flex-column justify-content-center align-items-center">
-        <Outlet /> {/* This will render Login or CreateAccount */}
+        <Outlet />
         </div>
         
     </main>

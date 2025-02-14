@@ -4,16 +4,16 @@ import { BrowserRouter, Route, Routes , Navigate } from 'react-router-dom';
 import MainLayout from './Layout/MainLayout';
 import { Rules } from './pages/rules/rules';
 import { Game } from './pages/game/game';
-import { Home } from './pages/home/home';
-import { Login }  from './pages/Auth/login/login';
-import { CreateAccount }from './pages/Auth/create-account/create-account';
+import { HomeLayout } from './Layout/HomeLayout';
+import { Login }  from './pages/login/login';
+import { CreateAccount }from './pages/create-account/create-account';
 
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        
-        <Route path="/" element={<Home />}>
+
+        <Route path="/" element={<HomeLayout />}>
           <Route index element={<Navigate to="login" replace />} />
           <Route path="login" element={<Login />} />
           <Route path="create-account" element={<CreateAccount />} />
