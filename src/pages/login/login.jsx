@@ -1,8 +1,7 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 
 export function Login() {
-  const navigate = useNavigate();
   return (
     <div className="login-box w-75 p-4 rounded shadow">
       <h2>Login</h2>
@@ -18,9 +17,9 @@ export function Login() {
         <button className="btn btn-primary w-100" type="submit">Login</button>
       </form>
       <p className="mt-3">
-        Don't have an account? <a href="/create-account">Create your account.</a>
+        Don't have an account? <NavLink to="/create-account">Create your account.</NavLink>
       </p>
-      <button className="btn btn-success w-100 mt-2" onClick={() => navigate('/game')}>Play Game!</button>
+      <NavLink to="/game" className="btn btn-success w-100 mt-2" >Play Game!</NavLink>
     </div>
   );
 }
