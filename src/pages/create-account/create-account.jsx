@@ -1,27 +1,82 @@
-import React from 'react';
-import { NavLink } from 'react-router-dom';
+import React, { useState } from 'react';
+import { NavLink, useNavigate } from 'react-router-dom';
+import { AuthState } from '../login/authState';
 
-export function CreateAccount() {
+export function CreateAccount({ onAuthChange }) {
+  const [signupUser, setSignupUser] = useState('');
+  const [signupEmail, setSignupEmail] = useState('');
+  const [signupPassword, setSignupPassword] = useState('');
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
+
+  const handleSignup = (e) => {
+    e.preventDefault();
+
+    // Check if username already exists in localStorage
+    const existingUser = JSON.parse(localStorage.getItem('auth'));
+    if (existingUser && existingUser.username === signupUser) {
+      setError('Username already taken.');
+      return;
+    }
+
+    // Save new user to localStorage
+    const newUser = { username: signupUser, email: signupEmail, password: signupPassword, loggedIn: true };
+    localStorage.setItem('auth', JSON.stringify(newUser));
+
+    // Update auth state in parent component
+    onAuthChange(signupUser, AuthState.Authenticated);
+
+    // Redirect to game or home page
+    navigate('/game');
+  };
+
   return (
     <div className="login-box w-75 p-4 rounded shadow">
       <h2>Create Account</h2>
-      <form id="signup-form" action="placeholder" method="POST">
+      {error && <div className="alert alert-danger">{error}</div>}
+      <form onSubmit={handleSignup}>
         <div className="form-group mb-3">
           <label htmlFor="signup-username">Username</label>
-          <input type="text" id="signup-username" placeholder="Enter your username: " />
+          <input
+            type="text"
+            id="signup-username"
+            className="form-control"
+            placeholder="Enter your username"
+            required
+            value={signupUser}
+            onChange={(e) => setSignupUser(e.target.value)}
+          />
         </div>
         <div className="form-group mb-3">
           <label htmlFor="signup-email">Email</label>
-          <input type="email" id="signup-email" placeholder="Enter your email: " />
+          <input
+            type="email"
+            id="signup-email"
+            className="form-control"
+            placeholder="Enter your email"
+            required
+            value={signupEmail}
+            onChange={(e) => setSignupEmail(e.target.value)}
+          />
         </div>
         <div className="form-group mb-3">
           <label htmlFor="signup-password">Password</label>
-          <input type="password" id="signup-password" placeholder="Enter your password: " />
+          <input
+            type="password"
+            id="signup-password"
+            className="form-control"
+            placeholder="Enter your password"
+            required
+            value={signupPassword}
+            onChange={(e) => setSignupPassword(e.target.value)}
+          />
         </div>
-        <button className="btn btn-primary w-100" type="submit">Sign Up</button>
+        <button className="btn btn-primary w-100" type="submit">
+          Sign Up
+        </button>
       </form>
       <p className="mt-3">
-        Already have an account? <NavLink to="/login" id="switch-to-login">Log in here</NavLink>
+        Already have an account? <NavLink to="/login">Log in here</NavLink>
       </p>
     </div>
   );
