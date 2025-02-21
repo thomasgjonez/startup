@@ -13,7 +13,7 @@ export function Authenticated(props) {
   }
 
   return (
-    <div>
+    <div className= "login-box w-75 p-4 rounded shadow">
       <div className='playerName'>{props.userName}</div>
       <Button variant='primary' onClick={() => navigate('/game')}>
         Play

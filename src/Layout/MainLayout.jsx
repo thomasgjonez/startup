@@ -1,9 +1,10 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 import { NavLink } from 'react-router-dom';
+
 import "./main.css"
 
-export default function MainLayout() {
+export default function MainLayout({ userName }) {
   return (
     
     <div className="vh-100 d-flex flex-column">
@@ -15,7 +16,7 @@ export default function MainLayout() {
               <NavLink to="/" className="btn">Home</NavLink>
               <NavLink to="/game" className="btn">Game</NavLink>
               <NavLink to="/rules" className="btn">Rules</NavLink>
-              <h3 className="UserName">UserName</h3>
+              {userName && <div className="playerName">{userName}</div>}
             </div>
           </nav>
         </div>
