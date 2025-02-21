@@ -12,12 +12,6 @@ export function CreateAccount({ onAuthChange }) {
   const handleSignup = (e) => {
     e.preventDefault();
 
-    // Check if username already exists in localStorage
-    const existingUser = JSON.parse(localStorage.getItem('auth'));
-    if (existingUser && existingUser.username === signupUser) {
-      setError('Username already taken.');
-      return;
-    }
 
     // Save new user to localStorage
     const newUser = { username: signupUser, email: signupEmail, password: signupPassword, loggedIn: true };
@@ -35,8 +29,8 @@ export function CreateAccount({ onAuthChange }) {
       <h2>Create Account</h2>
       {error && <div className="alert alert-danger">{error}</div>}
       <form onSubmit={handleSignup}>
-        <div className="form-group mb-3">
-          <label htmlFor="signup-username">Username</label>
+        <div className="form-group mb">
+          <label htmlFor="signup-username"></label>
           <input
             type="text"
             id="signup-username"
@@ -47,8 +41,8 @@ export function CreateAccount({ onAuthChange }) {
             onChange={(e) => setSignupUser(e.target.value)}
           />
         </div>
-        <div className="form-group mb-3">
-          <label htmlFor="signup-email">Email</label>
+        <div className="form-group mb">
+          <label htmlFor="signup-email"></label>
           <input
             type="email"
             id="signup-email"
@@ -60,7 +54,7 @@ export function CreateAccount({ onAuthChange }) {
           />
         </div>
         <div className="form-group mb-3">
-          <label htmlFor="signup-password">Password</label>
+          <label htmlFor="signup-password"></label>
           <input
             type="password"
             id="signup-password"
