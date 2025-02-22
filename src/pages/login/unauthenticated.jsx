@@ -9,20 +9,23 @@ export function Unauthenticated(props) {
 
   async function loginUser() {
     if (!userName || !password) {
-      setDisplayError("Username and password are required.");
-      return;
-    }
+        setDisplayError("Username and password are required.");
+        return;
+      }
+    
+      const storedUsers = JSON.parse(localStorage.getItem("users")) || [];
 
-    // Retrieve user from localStorage
-    const storedUser = JSON.parse(localStorage.getItem('auth'));
-
-    if (!storedUser || storedUser.username !== userName || storedUser.password !== password) {
-      setDisplayError("Invalid username or password.");
-      return;
-    }
-
-    // Call login handler
-    props.onLogin(userName);
+      // Check if the username exists
+      if (!storedUsers.includes(userName)) {
+        setDisplayError("Username not found.");
+        return;
+      }
+    
+      // Save login state
+      localStorage.setItem("auth", JSON.stringify({ loggedIn: true, username: userName }));
+    
+      // Call login handler
+      props.onLogin(userName);
   }
 
   return (

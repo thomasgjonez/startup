@@ -12,16 +12,22 @@ export function CreateAccount({ onAuthChange }) {
   const handleSignup = (e) => {
     e.preventDefault();
 
+  // Get stored users from localStorage
+  const storedUsers = JSON.parse(localStorage.getItem("users")) || [];
 
-    // Save new user to localStorage
-    const newUser = { username: signupUser, email: signupEmail, password: signupPassword, loggedIn: true };
-    localStorage.setItem('auth', JSON.stringify(newUser));
+  // Check if the username already exists
+  if (storedUsers.includes(signupUser)) {
+    setError("Username already taken.");
+    return;
+  }
 
-    // Update auth state in parent component
-    onAuthChange(signupUser, AuthState.Authenticated);
+  // Save new user to localStorage
+  storedUsers.push(signupUser);
+  localStorage.setItem("users", JSON.stringify(storedUsers));
 
-    // Redirect to game or home page
-    navigate('/game');
+  // Log in the new user
+  onAuthChange(signupUser, AuthState.Authenticated);
+  navigate("/game");
   };
 
   return (
