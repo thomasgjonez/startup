@@ -4,6 +4,7 @@ import './game.css'
 
 export function Game() {
   const [roomCode, setRoomCode] = useState("");
+  const [timer, setTimer] = useState(10);
 
   // Load saved room code from localStorage on mount
   useEffect(() => {
@@ -25,6 +26,19 @@ export function Game() {
       alert("Room code saved!");
     }
   }
+
+  const startTimer = () => {
+    const countdown = setInterval(() => {
+      setTimer((prevTime) => {
+        if (prevTime <= 1) {
+          clearInterval(countdown); // Stop the timer when it reaches 0
+          alert("Time's up! This is just a mock, the timer will normally be much longer and random");
+          return 0;
+        }
+        return prevTime - 1;
+      });
+    }, 1000); // Update every 1000 ms (1 second)
+  };
 
   return (
     <div className="container-fluid flex-grow-1">
@@ -49,7 +63,7 @@ export function Game() {
               <tr>
                 <td id="UserName">Johnsmith_2</td>
                 <td id="Turn">Not Yet</td>
-                <td id="UserNameWordGuessed">N/A</td>
+                <td id="UserNameWordGuessed">lambda</td>
               </tr>
             </tbody>
           </table>
@@ -70,7 +84,7 @@ export function Game() {
               onKeyDown={handleKeyPress}
             />
           </form>
-          <button className="btn btn-success w100">Play Game!</button>
+          <button className="btn btn-success w100" onClick={startTimer}>Play Game!</button>
           <form action="#" method="post" className="w-50 mt-2">
             <input
               type="text"
@@ -85,8 +99,8 @@ export function Game() {
               id="DescriptionWordBox"
               className="form-control mb-2 py-3"
               rows="4"
-              readOnly
-            >
+              readOnly>
+            
               Describe the Word if it's your turn!
             </textarea>
           </form>
@@ -125,12 +139,12 @@ export function Game() {
               <tr>
                 <td id="UserName">Johnsmith_15</td>
                 <td id="Turn">Not Yet</td>
-                <td id="UserNameWordGuessed">Banana</td>
+                <td id="UserNameWordGuessed">N/A</td>
               </tr>
               <tr>
                 <td id="UserName">Johnsmith_20</td>
                 <td id="Turn">Not Yet</td>
-                <td id="UserNameWordGuessed">Orange</td>
+                <td id="UserNameWordGuessed">N/A</td>
               </tr>
             </tbody>
           </table>
