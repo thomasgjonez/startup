@@ -5,6 +5,7 @@ import './game.css'
 export function Game({userName}) {
   const [roomCode, setRoomCode] = useState("");
   const [timer, setTimer] = useState(10);
+  const [guessedWord, setGuessedWord] = useState("");
 
   // Load saved room code from localStorage on mount
   useEffect(() => {
@@ -14,8 +15,12 @@ export function Game({userName}) {
     }
   }, []);
 
-  const handleChange = (event) => {
+  const handleRoomChange = (event) => {
     setRoomCode(event.target.value);
+  };
+
+  const handleGuessedWordChange = (event) => {
+    setGuessedWord(event.target.value);
   };
 
   // Handle Enter key press
@@ -23,7 +28,8 @@ export function Game({userName}) {
     if (event.key === "Enter") {
       event.preventDefault(); // Prevent form submission
       localStorage.setItem("roomCode", roomCode);
-      alert("Room code saved!");
+      localStorage.setItem("guessedWord", guessedWord);
+      alert("Room code and guessedWord saved!");
     }
   }
 
@@ -63,7 +69,7 @@ export function Game({userName}) {
               <tr>
                 <td id="UserName">{userName}</td>
                 <td id="Turn">Not Yet</td>
-                <td id="UserNameWordGuessed">lambda</td>
+                <td id="UserNameWordGuessed">{guessedWord}</td>
               </tr>
             </tbody>
           </table>
@@ -80,7 +86,7 @@ export function Game({userName}) {
               className="form-control mb-2"
               placeholder="Enter Room Code"
               value={roomCode}
-              onChange={handleChange}
+              onChange={handleRoomChange}
               onKeyDown={handleKeyPress}
             />
           </form>
@@ -90,8 +96,11 @@ export function Game({userName}) {
               type="text"
               id="GuessWordBox"
               className="form-control mb-3"
-              value="Guess the Word!"
-              readOnly
+              placeholder="Guess the Word!"
+              value={guessedWord}
+              onChange={handleGuessedWordChange}
+              onKeyDown={handleKeyPress}
+              
             />
           </form>
           <form action="#" method="post" className="w-50">
