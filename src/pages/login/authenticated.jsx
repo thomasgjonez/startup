@@ -13,14 +13,15 @@ export function Authenticated(props) {
   }
 
   return (
-    <div className= "login-box w-75 p-4 rounded shadow">
-      <div className='playerName'>{props.userName}</div>
-      <Button variant='primary' onClick={() => navigate('/game')}>
-        Play
-      </Button>
-      <Button variant='secondary' onClick={() => logout()}>
-        Logout
-      </Button>
+   <div>
+    <h1>Welcome to CatchPhrase</h1>
+    <h3>{props.userName}</h3>
+    <Button className="btn btn-success w100" size="lg" onClick={() => navigate('/game')} >
+      Play
+    </Button>
+    <Button variant="secondary" size="lg" onClick={() => logout()} >
+      Logout
+    </Button>
     </div>
   );
 }
