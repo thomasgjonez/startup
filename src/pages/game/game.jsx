@@ -1,7 +1,31 @@
 import React from 'react';
+import { useState, useEffect } from 'react';
 import './game.css'
 
 export function Game() {
+  const [roomCode, setRoomCode] = useState("");
+
+  // Load saved room code from localStorage on mount
+  useEffect(() => {
+    const storedCode = localStorage.getItem("roomCode");
+    if (storedCode) {
+      setRoomCode(storedCode);
+    }
+  }, []);
+
+  const handleChange = (event) => {
+    setRoomCode(event.target.value);
+  };
+
+  // Handle Enter key press
+  const handleKeyPress = (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault(); // Prevent form submission
+      localStorage.setItem("roomCode", roomCode);
+      alert("Room code saved!");
+    }
+  }
+
   return (
     <div className="container-fluid flex-grow-1">
       <div className="row h-100">
@@ -33,18 +57,21 @@ export function Game() {
 
         {/* Game Controls Section */}
         <section className="col-md-4 d-flex flex-column justify-content-center align-items-center">
-          <h2>Room Code: </h2>
-          <form action="#" method="POST" className="w-75 pb-5">
+          <h2>Room Code: {roomCode} </h2>
+          <form action="#" method="POST" className="w-75 pb-1">
             <label htmlFor="room-code"></label>
             <input
               type="text"
               id="room-code"
               className="form-control mb-2"
-              value="Enter Room Code"
-              readOnly
+              placeholder="Enter Room Code"
+              value={roomCode}
+              onChange={handleChange}
+              onKeyDown={handleKeyPress}
             />
           </form>
-          <form action="#" method="post" className="w-50">
+          <button className="btn btn-success w100">Play Game!</button>
+          <form action="#" method="post" className="w-50 mt-2">
             <input
               type="text"
               id="GuessWordBox"
