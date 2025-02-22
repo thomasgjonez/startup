@@ -13,6 +13,13 @@ export default function MainLayout({ userName }) {
     if (inputMessage.trim() !== "") {
       setMessages((prev) => [...prev, { username, text: inputMessage }]);
       setInputMessage("");
+      //Mock messages
+      setTimeout(() => {
+      setMessages((prev) => [...prev, { username: "Johnsmith_15", text: "what a cool insight" }]);
+      }, 2000 )
+      setTimeout(() => {
+      setMessages((prev) => [...prev, { username: "Johnsmith_1", text: "I love CatchPhrase" }]);
+      }, 4000 )
     }
   };
   
