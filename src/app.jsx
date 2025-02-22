@@ -46,7 +46,7 @@ export default function App() {
 
         {/* Main Layout Routes */}
         <Route element={<MainLayout userName={userName} />}>
-          <Route path="/game" element={<Game />} />
+          <Route path="/game" element={<Game userName={userName}/>} />
           <Route path="/rules" element={<Rules />} />
         </Route>
 

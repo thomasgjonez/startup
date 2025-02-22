@@ -2,7 +2,7 @@ import React from 'react';
 import { useState, useEffect } from 'react';
 import './game.css'
 
-export function Game() {
+export function Game({userName}) {
   const [roomCode, setRoomCode] = useState("");
   const [timer, setTimer] = useState(10);
 
@@ -61,7 +61,7 @@ export function Game() {
                 <td id="UserNameWordGuessed">N/A</td>
               </tr>
               <tr>
-                <td id="UserName">Johnsmith_2</td>
+                <td id="UserName">{userName}</td>
                 <td id="Turn">Not Yet</td>
                 <td id="UserNameWordGuessed">lambda</td>
               </tr>
