@@ -6,6 +6,9 @@ export function Game({userName}) {
   const [roomCode, setRoomCode] = useState("");
   const [timer, setTimer] = useState(30);
   const [guessedWord, setGuessedWord] = useState("");
+  const [blueTeam, setBlueTeam] = useState([]);
+  const [greenTeam, setGreenTeam] = useState([]);
+  const [teamsInitialized, setTeamsInitialized] = useState(false);
 
   // Load saved room code from localStorage on mount
   useEffect(() => {
@@ -46,16 +49,36 @@ export function Game({userName}) {
       });
     }, 1000);
   };
+  const generateRandomUsers = (num) => {
+    const randomUsers = [];
+    for (let i = 1; i <= num; i++) {
+      randomUsers.push({
+        username: `Player_${Math.floor(Math.random() * 1000)}`,
+        turn: i === 1 ? "Your turn" : "Not Yet", // First player starts
+        guessedWord: i === 1 ? "N/A" : ""
+      });
+    }
+    return randomUsers;
+  };
+  const initializeTeams = () => {
+    setBlueTeam(generateRandomUsers(4));
+    setGreenTeam(generateRandomUsers(4));
+    setTeamsInitialized(true);
+  };
+
+  const initializaGame = () => {
+    {/*startTimer()*/}
+    initializeTeams()
+    playGame()
+  }
+
 
   return (
     <div className="container-fluid flex-grow-1">
       <div className="row h-100">
-        {/* Team One Section */}
-        <div className="text-center">
-          <h2>Time Left: {timer} seconds</h2>
-        </div>
+        {/* Blue Team Section */}
         <section className="col-md-4 d-flex flex-column justify-content-start align-items-center" style={{ marginTop: '10vh' }}>
-          <h2 className="Team" id="Team-one">Team One</h2>
+          <h2 className="Team" id="Team-one">Blue Team</h2>
           <table className="team-one">
             <thead>
               <tr>
@@ -65,22 +88,31 @@ export function Game({userName}) {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td id="UserName">Johnsmith_1</td>
-                <td id="Turn">Your turn</td>
-                <td id="UserNameWordGuessed">N/A</td>
-              </tr>
-              <tr>
-                <td id="UserName">{userName}</td>
-                <td id="Turn">Not Yet</td>
-                <td id="UserNameWordGuessed">{guessedWord}</td>
-              </tr>
+              {blueTeam.length > 0 && (
+                <>
+                  {blueTeam.map((player, index) => (
+                    <tr key={index}>
+                      <td>{player.username}</td>
+                      <td>{player.turn}</td>
+                      <td>{player.guessedWord}</td>
+                    </tr>
+                  ))}
+                  {/* Include current user for demo puprposes only */}
+                  <tr>
+                    <td id="UserName">{userName}</td>
+                    <td id="Turn">Not Yet</td>
+                    <td id="UserNameWordGuessed">{guessedWord}</td>
+                  </tr>
+                </>
+              )}
             </tbody>
           </table>
         </section>
-
         {/* Game Controls Section */}
         <section className="col-md-4 d-flex flex-column justify-content-center align-items-center">
+        <div className="text-center">
+          <h2>Time Left: {timer} seconds</h2>
+        </div>
           <h2>Room Code: {roomCode} </h2>
           <form action="#" method="POST" className="w-75 pb-1">
             <label htmlFor="room-code"></label>
@@ -94,7 +126,7 @@ export function Game({userName}) {
               onKeyDown={handleKeyPress}
             />
           </form>
-          <button className="btn btn-success w100" onClick={startTimer}>Play Game!</button>
+          <button className="btn btn-success w100" onClick={initializaGame }>Play Game!</button>
           <form action="#" method="post" className="w-50 mt-2">
             <input
               type="text"
@@ -137,9 +169,9 @@ export function Game({userName}) {
           </div>
         </section>
 
-        {/* Team Two Section */}
+        {/* Green Team Section */}
         <section className="col-md-4 d-flex flex-column justify-content-start align-items-center" style={{ marginTop: '10vh' }}>
-          <h2 id="Team-two">Team Two</h2>
+          <h2 className="Team" id="Team-two">Green Team</h2>
           <table className="team-two">
             <thead>
               <tr>
@@ -149,18 +181,20 @@ export function Game({userName}) {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <td id="UserName">Johnsmith_15</td>
-                <td id="Turn">Not Yet</td>
-                <td id="UserNameWordGuessed">N/A</td>
-              </tr>
-              <tr>
-                <td id="UserName">Johnsmith_20</td>
-                <td id="Turn">Not Yet</td>
-                <td id="UserNameWordGuessed">N/A</td>
-              </tr>
+              {greenTeam.length > 0 && (
+                <>
+                  {greenTeam.map((player, index) => (
+                    <tr key={index}>
+                      <td>{player.username}</td>
+                      <td>{player.turn}</td>
+                      <td>{player.guessedWord}</td>
+                    </tr>
+                  ))}
+                </>
+              )}
             </tbody>
           </table>
+                  
         </section>
       </div>
     </div>
