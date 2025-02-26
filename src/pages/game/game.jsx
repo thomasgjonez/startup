@@ -4,7 +4,7 @@ import './game.css'
 
 export function Game({userName}) {
   const [roomCode, setRoomCode] = useState("");
-  const [timer, setTimer] = useState(10);
+  const [timer, setTimer] = useState(30);
   const [guessedWord, setGuessedWord] = useState("");
 
   // Load saved room code from localStorage on mount
@@ -34,6 +34,7 @@ export function Game({userName}) {
   }
 
   const startTimer = () => {
+    setTimer(10);
     const countdown = setInterval(() => {
       setTimer((prevTime) => {
         if (prevTime <= 1) {
@@ -43,13 +44,16 @@ export function Game({userName}) {
         }
         return prevTime - 1;
       });
-    }, 1000); // Update every 1000 ms (1 second)
+    }, 1000);
   };
 
   return (
     <div className="container-fluid flex-grow-1">
       <div className="row h-100">
         {/* Team One Section */}
+        <div className="text-center">
+          <h2>Time Left: {timer} seconds</h2>
+        </div>
         <section className="col-md-4 d-flex flex-column justify-content-start align-items-center" style={{ marginTop: '10vh' }}>
           <h2 className="Team" id="Team-one">Team One</h2>
           <table className="team-one">
