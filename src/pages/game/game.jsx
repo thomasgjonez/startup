@@ -4,11 +4,16 @@ import './game.css'
 
 export function Game({userName}) {
   const [roomCode, setRoomCode] = useState("");
-  const [timer, setTimer] = useState(30);
+  const [timer, setTimer] = useState();
   const [guessedWord, setGuessedWord] = useState("");
   const [blueTeam, setBlueTeam] = useState([]);
+  const [blueTeamPts, setBlueTeamPts] = useState(0);
+  const [greenTeamPts, setGreenTeamPts] = useState(0);
   const [greenTeam, setGreenTeam] = useState([]);
   const [teamsInitialized, setTeamsInitialized] = useState(false);
+  const [teamTurn, setTeamTurn] = useState("blue");
+  const [randomWord, setRandomWord] = useState("");
+  const [winCondition, setWinCondition] = useState(false);
 
   // Load saved room code from localStorage on mount
   useEffect(() => {
@@ -36,19 +41,18 @@ export function Game({userName}) {
     }
   }
 
-  const startTimer = () => {
-    setTimer(10);
-    const countdown = setInterval(() => {
-      setTimer((prevTime) => {
-        if (prevTime <= 1) {
-          clearInterval(countdown); // Stop the timer when it reaches 0
-          alert("Time's up! This is just a mock, the timer will normally be much longer and random");
-          return 0;
-        }
-        return prevTime - 1;
-      });
-    }, 1000);
-  };
+  useEffect(() => {
+    if (timer > 0) {
+      const countdown = setInterval(() => {
+        setTimer((prevTime) => prevTime - 1);
+      }, 1000);
+      return () => clearInterval(countdown);
+    } else if (timer === 0) {
+      endRound();
+    }
+  }, [timer]);
+
+
   const generateRandomUsers = (num) => {
     const randomUsers = [];
     for (let i = 1; i <= num; i++) {
@@ -60,6 +64,15 @@ export function Game({userName}) {
     }
     return randomUsers;
   };
+
+  const getRandomWord = () => {
+    return "apple"
+  };
+
+  const pickDescriber = (team) => {
+
+  };
+
   const initializeTeams = () => {
     setBlueTeam(generateRandomUsers(4));
     setGreenTeam(generateRandomUsers(4));
@@ -69,8 +82,38 @@ export function Game({userName}) {
   const initializaGame = () => {
     {/*startTimer()*/}
     initializeTeams()
-    playGame()
+    startRound()
   }
+
+  const startRound = () => {
+    if (winCondition) return;
+
+    const word = getRandomWord();
+    const chosenDescriber = pickDescriber(teamTurn);
+    setRandomWord(word);
+    {/*setDescriber(chosenDescriber);*/}
+    setTimer(5); // Reset timer
+  }
+
+  const endRound = () => {
+    if (guessedWord === randomWord) {
+      setTeamTurn((prev) => (prev === "blue" ? "green" : "blue")); // Switch turns
+    } else {
+      if (teamTurn === "blue") {
+        setGreenTeamPts((prev) => prev + 1);
+      } else {
+        setBlueTeamPts((prev) => prev + 1);
+      }
+    }
+
+    // Check for win condition
+    if (blueTeamPts >= 5 || greenTeamPts >= 5) {
+      setWinCondition(true);
+      alert(`${blueTeamPts >= 5 ? "Blue Team" : "Green Team"} Wins!`);
+    } else {
+      startRound(); // Start next round
+    }
+  };
 
 
   return (
@@ -78,7 +121,7 @@ export function Game({userName}) {
       <div className="row h-100">
         {/* Blue Team Section */}
         <section className="col-md-4 d-flex flex-column justify-content-start align-items-center" style={{ marginTop: '10vh' }}>
-          <h2 className="Team" id="Team-one">Blue Team</h2>
+          <h2 className="Team" id="Team-one">Blue Team Score: {blueTeamPts} </h2>
           <table className="team-one">
             <thead>
               <tr>
@@ -139,7 +182,7 @@ export function Game({userName}) {
               
             />
           </form>
-          <form action="#" method="post" className="w-50">
+          <form action="#" method="post" className="w-100">
             <textarea
               id="DescriptionWordBox"
               className="form-control mb-2 py-3"
@@ -171,7 +214,7 @@ export function Game({userName}) {
 
         {/* Green Team Section */}
         <section className="col-md-4 d-flex flex-column justify-content-start align-items-center" style={{ marginTop: '10vh' }}>
-          <h2 className="Team" id="Team-two">Green Team</h2>
+          <h2 className="Team" id="Team-two">Green Team Score: {greenTeamPts} </h2>
           <table className="team-two">
             <thead>
               <tr>
