@@ -18,7 +18,24 @@ export function Game({userName}) {
   const [greenDescriberIndex, setGreenDescriberIndex] = useState(0);
   const [currentDescriber, setCurrentDescriber] = useState(null);
   const [describerResponse, setDescriberResponse] = useState("");
-
+  const predefinedBluePositions = [
+    { left: "", top: "" },  // Position for score 0
+    { left: "2.5px", top: "25px" },  // Position for score 1
+    { left: "15px", top: "75px%" },  // Position for score 2
+    { left: "175px", top: "115px" },  // Position for score 3
+    { left: "350px", top: "115px" },  // Position for score 4
+    { left: "435px", top: "78px" },  // Position for score 5
+    { left: "450px", top: "15px" },  // Position for score 6
+  ];
+  const predefinedGreenPositions = [
+    { left: "", top: "" },  // Position for score 0
+    { left: "75px", top: "15px" },  // Position for score 1
+    { left: "135px", top: "75px" },  // Position for score 2
+    { left: "230px", top: "125px" },  // Position for score 3
+    { left: "295px", top: "125px" },  // Position for score 4
+    { left: "391px", top: "80px" },  // Position for score 5
+    { left: "500px", top: "10px" },  // Position for score 6
+  ];
 
   useEffect(() => {
     const storedCode = localStorage.getItem("roomCode");
@@ -180,6 +197,34 @@ export function Game({userName}) {
       startRound();
     }
   };
+
+  const getBluePiecePosition = (score) => {
+    return predefinedBluePositions[score];
+  };
+
+  const getGreenPiecePosition = (score) => {
+    return predefinedGreenPositions[score];
+  };
+
+
+  useEffect(() => {
+    const bluePiecePosition = getBluePiecePosition(blueTeamPts);
+    const bluePiece = document.querySelector('.blue-piece');
+    if (bluePiece && bluePiecePosition) {
+      bluePiece.style.left = bluePiecePosition.left;
+      bluePiece.style.top = bluePiecePosition.top;
+    }
+  }, [blueTeamPts]);
+
+
+  useEffect(() => {
+    const greenPiecePosition = getGreenPiecePosition(greenTeamPts);
+    const greenPiece = document.querySelector('.green-piece');
+    if (greenPiece && greenPiecePosition) {
+      greenPiece.style.left = greenPiecePosition.left;
+      greenPiece.style.top = greenPiecePosition.top;
+    }
+  }, [greenTeamPts]);
 
 
   return (
