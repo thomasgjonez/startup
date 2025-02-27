@@ -190,9 +190,9 @@ export function Game({userName}) {
 
 
     // Check for win condition
-    if (blueTeamPts >= 5 || greenTeamPts >= 5) {
+    if (blueTeamPts === 5 || greenTeamPts === 5) {
       setWinCondition(true);
-      alert(`${blueTeamPts >= 5 ? "Blue Team" : "Green Team"} Wins!`);
+      alert(`${blueTeamPts === 5 ? "Blue Team" : "Green Team"} Wins!`);
     } else {
       startRound();
     }

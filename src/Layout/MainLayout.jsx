@@ -1,4 +1,4 @@
-import React, { useState, useEffect} from 'react';
+import React, { useState, useEffect, useRef} from 'react';
 import { Outlet } from 'react-router-dom';
 import { NavLink } from 'react-router-dom';
 
@@ -8,6 +8,7 @@ export default function MainLayout({ userName }) {
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState("");
   const username = userName;
+  const chatBoxRef = useRef(null);
 
   const addMessage = () => {
     if (inputMessage.trim() !== "") {
@@ -26,7 +27,13 @@ export default function MainLayout({ userName }) {
     // This will be replaced with WebSocket messages
     const userName = `User-${Math.floor(Math.random() * 100)}`;
     setMessages((prev) => [...prev, { username: userName, text: "Hi!" }]);;
-  }, 1000);
+  }, 5000);
+
+  useEffect(() => {
+    if (chatBoxRef.current) {
+      chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
+    }
+  }, [messages]);
   
   return (
     
@@ -51,7 +58,7 @@ export default function MainLayout({ userName }) {
 
       <footer className="text-center py-3 bg-light">
         <h2>Live Chat</h2>
-        <div className="chatBox border rounded p-3 bg-white shadow-sm w-50 mx-auto "style={{ maxHeight: "100px", overflowY: "auto" }}>
+        <div ref={chatBoxRef} className="chatBox border rounded p-3 bg-white shadow-sm w-50 mx-auto "style={{ maxHeight: "100px", overflowY: "auto" }}>
           {messages.map((msg, index) => (
             <p key={index}><strong>{msg.username}: </strong> {msg.text}</p>
           ))}
