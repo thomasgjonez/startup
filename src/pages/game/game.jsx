@@ -34,10 +34,9 @@ export function Game({userName}) {
   // Handle Enter key press
   const handleKeyPress = (event) => {
     if (event.key === "Enter") {
-      event.preventDefault(); // Prevent form submission
+      event.preventDefault();
       localStorage.setItem("roomCode", roomCode);
-      localStorage.setItem("guessedWord", guessedWord);
-      alert("Room code and guessedWord saved!");
+      alert("Room code saved!");
     }
   }
 
@@ -66,7 +65,8 @@ export function Game({userName}) {
   };
 
   const getRandomWord = () => {
-    return "apple"
+    const words = ["apple"];
+    return words[Math.floor(Math.random() * words.length)];
   };
 
   const pickDescriber = (team) => {
@@ -82,29 +82,34 @@ export function Game({userName}) {
   const initializaGame = () => {
     {/*startTimer()*/}
     initializeTeams()
+    setBlueTeamPts(0)
+    setGreenTeamPts(0)
     startRound()
   }
 
   const startRound = () => {
     if (winCondition) return;
+    setTimer(10); // Reset timer
+    setRandomWord(getRandomWord());
 
-    const word = getRandomWord();
-    const chosenDescriber = pickDescriber(teamTurn);
-    setRandomWord(word);
-    {/*setDescriber(chosenDescriber);*/}
-    setTimer(5); // Reset timer
   }
 
-  const endRound = () => {
-    if (guessedWord === randomWord) {
+  useEffect(() => {
+    if (guessedWord === randomWord && randomWord !== "") {
+      alert("Team switch");
       setTeamTurn((prev) => (prev === "blue" ? "green" : "blue")); // Switch turns
-    } else {
-      if (teamTurn === "blue") {
-        setGreenTeamPts((prev) => prev + 1);
-      } else {
-        setBlueTeamPts((prev) => prev + 1);
-      }
+      setRandomWord(getRandomWord()); // Set a new word for the next round
+      setGuessedWord(""); // Reset guessed word input
     }
+  }, [guessedWord, randomWord]);
+
+  const endRound = () => {
+    if (teamTurn === "blue") {
+      setGreenTeamPts((prev) => prev + 1);
+    } else {
+      setBlueTeamPts((prev) => prev + 1);
+    }
+
 
     // Check for win condition
     if (blueTeamPts >= 5 || greenTeamPts >= 5) {
