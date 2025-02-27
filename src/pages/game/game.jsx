@@ -14,8 +14,11 @@ export function Game({userName}) {
   const [teamTurn, setTeamTurn] = useState("blue");
   const [randomWord, setRandomWord] = useState("");
   const [winCondition, setWinCondition] = useState(false);
+  const [blueDescriberIndex, setBlueDescriberIndex] = useState(0);
+  const [greenDescriberIndex, setGreenDescriberIndex] = useState(0);
+  const [currentDescriber, setCurrentDescriber] = useState(null);
 
-  // Load saved room code from localStorage on mount
+
   useEffect(() => {
     const storedCode = localStorage.getItem("roomCode");
     if (storedCode) {
@@ -57,8 +60,8 @@ export function Game({userName}) {
     for (let i = 1; i <= num; i++) {
       randomUsers.push({
         username: `Player_${Math.floor(Math.random() * 1000)}`,
-        turn: i === 1 ? "Your turn" : "Not Yet", // First player starts
-        guessedWord: i === 1 ? "N/A" : ""
+        turn: "",
+      guessedWord: "" 
       });
     }
     return randomUsers;
@@ -69,22 +72,45 @@ export function Game({userName}) {
     return words[Math.floor(Math.random() * words.length)];
   };
 
-  const pickDescriber = (team) => {
+  const pickDescriber = () => {
+    if (!blueTeam.length || !greenTeam.length) {
+      console.warn("Cannot pick describer: Teams are empty.");
+      return;
+    }
 
+    let describer;
+  
+    if (teamTurn === "blue") {
+      describer = blueTeam[blueDescriberIndex % blueTeam.length];
+      setBlueDescriberIndex((prev) => (prev + 1) % blueTeam.length); 
+    } else {
+      describer = greenTeam[greenDescriberIndex % greenTeam.length];
+      setGreenDescriberIndex((prev) => (prev + 1) % greenTeam.length);
+    }
+    setCurrentDescriber(describer);
+    alert(`The describer is: ${describer.username}!`);
+    
   };
 
   const initializeTeams = () => {
-    setBlueTeam(generateRandomUsers(4));
-    setGreenTeam(generateRandomUsers(4));
-    setTeamsInitialized(true);
-  };
-
-  const initializaGame = () => {
-    {/*startTimer()*/}
-    initializeTeams()
     setBlueTeamPts(0)
     setGreenTeamPts(0)
-    startRound()
+    const blue = generateRandomUsers(3);
+    const green = generateRandomUsers(3);
+    setBlueTeam(blue);
+    setGreenTeam(green);
+    setTeamsInitialized(true);
+
+    localStorage.setItem("blueTeam", JSON.stringify(blue));
+    localStorage.setItem("greenTeam", JSON.stringify(green));
+  };
+
+  const initializeGame = () => {
+    setTimeout(() => {
+      pickDescriber()
+      startRound();
+    }, 100);
+    
   }
 
   const startRound = () => {
@@ -97,11 +123,13 @@ export function Game({userName}) {
   useEffect(() => {
     if (guessedWord === randomWord && randomWord !== "") {
       alert("Team switch");
-      setTeamTurn((prev) => (prev === "blue" ? "green" : "blue")); // Switch turns
-      setRandomWord(getRandomWord()); // Set a new word for the next round
-      setGuessedWord(""); // Reset guessed word input
+      setTeamTurn((prev) => (prev === "blue" ? "green" : "blue")); 
+      setRandomWord(getRandomWord());
+      setGuessedWord("");
+      pickDescriber();
     }
   }, [guessedWord, randomWord]);
+  
 
   const endRound = () => {
     if (teamTurn === "blue") {
@@ -116,7 +144,7 @@ export function Game({userName}) {
       setWinCondition(true);
       alert(`${blueTeamPts >= 5 ? "Blue Team" : "Green Team"} Wins!`);
     } else {
-      startRound(); // Start next round
+      startRound();
     }
   };
 
@@ -148,7 +176,7 @@ export function Game({userName}) {
                   {/* Include current user for demo puprposes only */}
                   <tr>
                     <td id="UserName">{userName}</td>
-                    <td id="Turn">Not Yet</td>
+                    <td id="Turn"></td>
                     <td id="UserNameWordGuessed">{guessedWord}</td>
                   </tr>
                 </>
@@ -174,7 +202,10 @@ export function Game({userName}) {
               onKeyDown={handleKeyPress}
             />
           </form>
-          <button className="btn btn-success w100" onClick={initializaGame }>Play Game!</button>
+          <div>
+          <button className="btn btn-primary w100" onClick={initializeTeams }>Set Teams!</button>
+          <button className="btn btn-success w100" onClick={initializeGame }>Play Game!</button>
+          </div>
           <form action="#" method="post" className="w-50 mt-2">
             <input
               type="text"
@@ -188,14 +219,13 @@ export function Game({userName}) {
             />
           </form>
           <form action="#" method="post" className="w-100">
-            <textarea
+          <textarea
               id="DescriptionWordBox"
               className="form-control mb-2 py-3"
               rows="4"
-              readOnly>
-            
-              Describe the Word if it's your turn!
-            </textarea>
+              readOnly
+              value={currentDescriber ? `${currentDescriber.username} is describing!` : "Waiting for describer..."}
+          />
           </form>
 
           <div className="board-container">
