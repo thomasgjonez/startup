@@ -97,8 +97,10 @@ export function Game({userName}) {
     response = getRandomDescription();
     setCurrentDescriber(describer);
     setDescriberResponse(response);
+
     
   };
+  
 
   const initializeTeams = () => {
     setBlueTeamPts(0)
@@ -116,7 +118,6 @@ export function Game({userName}) {
   const initializeGame = () => {
     setTimeout(() => {
       pickDescriber();
-      handleUIChanges();
       startRound();
     }, 100);
     
@@ -135,9 +136,32 @@ export function Game({userName}) {
       setTeamTurn((prev) => (prev === "blue" ? "green" : "blue")); 
       setRandomWord(getRandomWord());
       setGuessedWord("");
-      pickDescriber();
     }
   }, [guessedWord, randomWord]);
+
+  useEffect(() => {
+    if (!currentDescriber) return;
+  
+    setBlueTeam((prevBlueTeam) =>
+      prevBlueTeam.map((player) => ({
+        ...player,
+        turn: player.username === currentDescriber.username ? "Describer" : "",
+      }))
+    );
+  
+    setGreenTeam((prevGreenTeam) =>
+      prevGreenTeam.map((player) => ({
+        ...player,
+        turn: player.username === currentDescriber.username ? "Describer" : "",
+      }))
+    );
+  }, [currentDescriber]);
+
+  useEffect(() => {
+    if (teamsInitialized) {
+      pickDescriber();
+    }
+  }, [teamTurn]);
   
 
   const endRound = () => {
@@ -156,10 +180,6 @@ export function Game({userName}) {
       startRound();
     }
   };
-
-  const handleUIChanges = () => {
-    
-  }
 
 
   return (
@@ -180,7 +200,7 @@ export function Game({userName}) {
               {blueTeam.length > 0 && (
                 <>
                   {blueTeam.map((player, index) => (
-                    <tr key={index}>
+                    <tr key={index} className={player.turn === "Describer" ? "highlight" : ""}>
                       <td>{player.username}</td>
                       <td>{player.turn}</td>
                       <td>{player.guessedWord}</td>
@@ -275,7 +295,7 @@ export function Game({userName}) {
               {greenTeam.length > 0 && (
                 <>
                   {greenTeam.map((player, index) => (
-                    <tr key={index}>
+                    <tr key={index} className={player.turn === "Describer" ? "highlight" : ""}>
                       <td>{player.username}</td>
                       <td>{player.turn}</td>
                       <td>{player.guessedWord}</td>
