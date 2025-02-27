@@ -17,6 +17,7 @@ export function Game({userName}) {
   const [blueDescriberIndex, setBlueDescriberIndex] = useState(0);
   const [greenDescriberIndex, setGreenDescriberIndex] = useState(0);
   const [currentDescriber, setCurrentDescriber] = useState(null);
+  const [describerResponse, setDescriberResponse] = useState("");
 
 
   useEffect(() => {
@@ -54,7 +55,7 @@ export function Game({userName}) {
     }
   }, [timer]);
 
-
+// will need to adjsut this later on when we have service/database stuff
   const generateRandomUsers = (num) => {
     const randomUsers = [];
     for (let i = 1; i <= num; i++) {
@@ -66,11 +67,16 @@ export function Game({userName}) {
     }
     return randomUsers;
   };
-
+// getRandomWord andn getRandomDescription are for demo purposes, will change in future
   const getRandomWord = () => {
     const words = ["apple"];
     return words[Math.floor(Math.random() * words.length)];
   };
+
+  const getRandomDescription = () => {
+    const descriptions = ["Its a red fruit", "Its red and you can eat it", "A red fruit that is sweet in crispy", "fruit that comes in three colors of red, gold, and green", "fruit that comes from a tree", " a _____ a day keeps the doctor away"];
+    return descriptions[Math.floor(Math.random() * descriptions.length)];
+  }
 
   const pickDescriber = () => {
     if (!blueTeam.length || !greenTeam.length) {
@@ -79,6 +85,7 @@ export function Game({userName}) {
     }
 
     let describer;
+    let response;
   
     if (teamTurn === "blue") {
       describer = blueTeam[blueDescriberIndex % blueTeam.length];
@@ -87,8 +94,9 @@ export function Game({userName}) {
       describer = greenTeam[greenDescriberIndex % greenTeam.length];
       setGreenDescriberIndex((prev) => (prev + 1) % greenTeam.length);
     }
+    response = getRandomDescription();
     setCurrentDescriber(describer);
-    alert(`The describer is: ${describer.username}!`);
+    setDescriberResponse(response);
     
   };
 
@@ -107,7 +115,8 @@ export function Game({userName}) {
 
   const initializeGame = () => {
     setTimeout(() => {
-      pickDescriber()
+      pickDescriber();
+      handleUIChanges();
       startRound();
     }, 100);
     
@@ -147,6 +156,10 @@ export function Game({userName}) {
       startRound();
     }
   };
+
+  const handleUIChanges = () => {
+    
+  }
 
 
   return (
@@ -224,7 +237,7 @@ export function Game({userName}) {
               className="form-control mb-2 py-3"
               rows="4"
               readOnly
-              value={currentDescriber ? `${currentDescriber.username} is describing!` : "Waiting for describer..."}
+              value={currentDescriber ? `${currentDescriber.username} is describing: ${describerResponse}` : "Waiting for describer..."}
           />
           </form>
 
