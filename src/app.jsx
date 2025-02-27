@@ -46,8 +46,8 @@ export default function App() {
 
         {/* Main Layout Routes */}
         <Route element={<MainLayout userName={userName} />}>
-          <Route path="/game" element={<Game userName={userName}/>} />
-          <Route path="/rules" element={<Rules />} />
+          <Route path="/game" element={authState === AuthState.Authenticated ? <Game userName={userName}/> : <Navigate to="/login" replace />} />
+          <Route path="/rules" element={authState === AuthState.Authenticated ? <Rules /> : <Navigate to="/login" replace />} />
         </Route>
 
         {/* Catch-all Route */}

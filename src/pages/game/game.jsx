@@ -20,8 +20,8 @@ export function Game({userName}) {
   const [describerResponse, setDescriberResponse] = useState("");
   const predefinedBluePositions = [
     { left: "", top: "" },  // Position for score 0
-    { left: "2.5px", top: "25px" },  // Position for score 1
-    { left: "15px", top: "75px%" },  // Position for score 2
+    { left: "21.5px", top: "10px" },  // Position for score 1
+    { left: "15px", top: "75px" },  // Position for score 2
     { left: "175px", top: "115px" },  // Position for score 3
     { left: "350px", top: "115px" },  // Position for score 4
     { left: "435px", top: "78px" },  // Position for score 5
@@ -84,7 +84,7 @@ export function Game({userName}) {
     }
     return randomUsers;
   };
-// getRandomWord andn getRandomDescription are for demo purposes, will change in future
+// getRandomWord andn getRandomDescription are for demo purposes, will change in future and are place holders for future APIs
   const getRandomWord = () => {
     const words = ["apple"];
     return words[Math.floor(Math.random() * words.length)];
