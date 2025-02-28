@@ -135,8 +135,8 @@ For this deliverable I did the following. I checked the box `[x]` and added a de
 
 For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
 
-- [ ] **All functionality implemented or mocked out** - I did not complete this part of the deliverable.
-- [ ] **Hooks** - I did not complete this part of the deliverable.
+- [x] **All functionality implemented or mocked out** - I completed this part and you'll be able to see that you need to create an account to access the game. The game functions similiarly to the future final result, but there are some extra details that are included. All you need to do is click set teams, which sets the teams and game conditions and then play game to start playing, which will switch team turns when you guess the word right. For testing purposes, the word will always be apple. As you get points the scoreboard will update and move your pieces. Then check win conditions and alert who wins.
+- [x] **Hooks** - I used hooks such as useState to manage game state, including team scores, player turns, timers, and word guessing. The useEffect hook is used for several key functionalities: initializing the room code from localStorage, handling the countdown timer, updating the game state when a word is guessed correctly, picking whos turn it is to describe the word, and repositioning game pieces based on score changes. These hooks ensure the game state remains reactive and synchronized across different user interactions. Additionally, I used hooks to manage authenticated pages, basically you have to log in, which saves to local storage, to access game and rule sections of the site and it remebers the user as well.
 
 ## 🚀 Service deliverable
 
