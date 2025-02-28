@@ -5,6 +5,7 @@ import './game.css'
 export function Game({userName}) {
   const [roomCode, setRoomCode] = useState("");
   const [timer, setTimer] = useState();
+  const [userGuess, setUserGuess] = useState("");
   const [guessedWord, setGuessedWord] = useState("");
   const [blueTeam, setBlueTeam] = useState([]);
   const [blueTeamPts, setBlueTeamPts] = useState(0);
@@ -18,6 +19,7 @@ export function Game({userName}) {
   const [greenDescriberIndex, setGreenDescriberIndex] = useState(0);
   const [currentDescriber, setCurrentDescriber] = useState(null);
   const [describerResponse, setDescriberResponse] = useState("");
+  const [isUserDescriber, setIsUserDescriber] = useState(false);
   const predefinedBluePositions = [
     { left: "", top: "" },  // Position for score 0
     { left: "21.5px", top: "10px" },  // Position for score 1
@@ -47,9 +49,28 @@ export function Game({userName}) {
   const handleRoomChange = (event) => {
     setRoomCode(event.target.value);
   };
+  const handleGuess = () => {
+    setBlueTeam((prevBlueTeam) =>
+      prevBlueTeam.map((player) =>
+        player.username === userName
+          ? { ...player, guessedWord: userGuess }
+          : player
+      )
+    );
+  
+    setGreenTeam((prevGreenTeam) =>
+      prevGreenTeam.map((player) =>
+        player.username === userName
+          ? { ...player, guessedWord: userGuess }
+          : player
+      )
+    );
 
-  const handleGuessedWordChange = (event) => {
-    setGuessedWord(event.target.value);
+    setGuessedWord(userGuess);
+    setUserGuess("");
+
+    localStorage.setItem("blueTeam", JSON.stringify(blueTeam));
+    localStorage.setItem("greenTeam", JSON.stringify(greenTeam));
   };
 
   // Handle Enter key press
@@ -58,6 +79,12 @@ export function Game({userName}) {
       event.preventDefault();
       localStorage.setItem("roomCode", roomCode);
       alert("Room code saved!");
+    }
+  }
+  const handleKeyPressforWord = (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      handleGuess();
     }
   }
 
@@ -79,9 +106,10 @@ export function Game({userName}) {
       randomUsers.push({
         username: `Player_${Math.floor(Math.random() * 1000)}`,
         turn: "",
-      guessedWord: "" 
+        guessedWord: "" 
       });
     }
+
     return randomUsers;
   };
 // getRandomWord andn getRandomDescription are for demo purposes, will change in future and are place holders for future APIs
@@ -117,11 +145,49 @@ export function Game({userName}) {
 
     
   };
+  useEffect(() => {
+    if (!currentDescriber) return;
+  
+    setBlueTeam((prevBlueTeam) =>
+      prevBlueTeam.map((player) => ({
+        ...player,
+        turn: player.username === currentDescriber.username ? "Describer" : "",
+      }))
+    );
+  
+    setGreenTeam((prevGreenTeam) =>
+      prevGreenTeam.map((player) => ({
+        ...player,
+        turn: player.username === currentDescriber.username ? "Describer" : "",
+      }))
+    );
+  
+    // Check if the current user is the describer
+    if (currentDescriber.username === userName) {
+      setIsUserDescriber(true);
+    } else {
+      setIsUserDescriber(false);
+    }
+  }, [currentDescriber]);
+  
+  useEffect(() => {
+    if (isUserDescriber) {
+      const userDescription = prompt("It's your turn to describe! Enter your description:");
+      if (userDescription) {
+        setDescriberResponse(userDescription);
+      }
+    }
+  }, [isUserDescriber]);
   
 
   const initializeTeams = () => {
     const blue = generateRandomUsers(3);
     const green = generateRandomUsers(3);
+    blue.push({
+      username: userName,
+      turn: "",
+      guessedWord: guessedWord 
+    })
     setBlueTeam(blue);
     setGreenTeam(green);
     setTeamsInitialized(true);
@@ -131,8 +197,8 @@ export function Game({userName}) {
   };
 
   const initializeGame = () => {
-    setBlueTeamPts(0)
-    setGreenTeamPts(0)
+    setBlueTeamPts(0);
+    setGreenTeamPts(0);
     setTimeout(() => {
       pickDescriber();
       startRound();
@@ -142,7 +208,7 @@ export function Game({userName}) {
 
   const startRound = () => {
     if (winCondition) return;
-    setTimer(3); // Reset timer
+    setTimer(10); // Reset timer
     setRandomWord(getRandomWord());
 
   }
@@ -251,12 +317,6 @@ export function Game({userName}) {
                       <td>{player.guessedWord}</td>
                     </tr>
                   ))}
-                  {/* Include current user for demo puprposes only */}
-                  <tr>
-                    <td id="UserName">{userName}</td>
-                    <td id="Turn"></td>
-                    <td id="UserNameWordGuessed">{guessedWord}</td>
-                  </tr>
                 </>
               )}
             </tbody>
@@ -290,9 +350,9 @@ export function Game({userName}) {
               id="GuessWordBox"
               className="form-control mb-3"
               placeholder="Guess the Word!"
-              value={guessedWord}
-              onChange={handleGuessedWordChange}
-              onKeyDown={handleKeyPress}
+              value={userGuess}
+              onChange={(e) => setUserGuess(e.target.value)}
+              onKeyDown={handleKeyPressforWord}
               
             />
           </form>
