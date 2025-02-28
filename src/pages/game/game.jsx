@@ -21,7 +21,7 @@ export function Game({userName}) {
   const predefinedBluePositions = [
     { left: "", top: "" },  // Position for score 0
     { left: "21.5px", top: "10px" },  // Position for score 1
-    { left: "15px", top: "75px" },  // Position for score 2
+    { left: "110px", top: "75px" },  // Position for score 2
     { left: "175px", top: "115px" },  // Position for score 3
     { left: "350px", top: "115px" },  // Position for score 4
     { left: "435px", top: "78px" },  // Position for score 5
@@ -120,8 +120,6 @@ export function Game({userName}) {
   
 
   const initializeTeams = () => {
-    setBlueTeamPts(0)
-    setGreenTeamPts(0)
     const blue = generateRandomUsers(3);
     const green = generateRandomUsers(3);
     setBlueTeam(blue);
@@ -133,6 +131,8 @@ export function Game({userName}) {
   };
 
   const initializeGame = () => {
+    setBlueTeamPts(0)
+    setGreenTeamPts(0)
     setTimeout(() => {
       pickDescriber();
       startRound();
@@ -142,7 +142,7 @@ export function Game({userName}) {
 
   const startRound = () => {
     if (winCondition) return;
-    setTimer(10); // Reset timer
+    setTimer(3); // Reset timer
     setRandomWord(getRandomWord());
 
   }
