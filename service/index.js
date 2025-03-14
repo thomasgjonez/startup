@@ -52,7 +52,7 @@ apiRouter.post('/auth/login', async (req, res) => {
   });
   
   // DeleteAuth logout a user
-  apiRouter.delete('/auth/logout', async (req, res) => {
+apiRouter.delete('/auth/logout', async (req, res) => {
     const user = await findUser('token', req.cookies[authCookieName]);
     if (user) {
       delete user.token;
@@ -61,13 +61,7 @@ apiRouter.post('/auth/login', async (req, res) => {
     res.status(204).end();
   });
 
-  // Need to add createTeam/setTeam(createsGame) endpoint
-
-  //update game endpoint?
-
-  //get randomword endpoint?
-
-  //clear endpoint?
+  
 
 // Default error handler
 app.use(function (err, req, res, next) {
