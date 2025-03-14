@@ -66,10 +66,10 @@ apiRouter.delete('/auth/logout', async (req, res) => {
 apiRouter.post('/game/createOrJoinRoom',(req,res) => {
     const {roomCode, username} = req.body;
     if (!roomCode){
-        return res.status(400).send({msg:"Room Code is required"});
+        return res.status(400).send({msg:'Room Code is required'});
     }
     if (!username){
-        return res.status(400).send({msg:"Username is required/you need to login in. How did you even get to this screen lol"})
+        return res.status(400).send({msg:'Username is required/you need to login in. How did you even get to this screen lol'})
     }
     // creates an empty gameState/object with the roomCode
     let gameState = games[roomCode];
@@ -99,6 +99,34 @@ apiRouter.post('/game/createOrJoinRoom',(req,res) => {
 });
 
 //Team and Player Setup section
+apiRouter.post('/game/setTeams', (req, res) => {
+    const { roomCode } = req.body;
+    if (!roomCode){
+        return res.status(400).send({msg:'Room Code is required'});
+    }
+    const gameState = games[roomCode];
+    if (!gameState) {
+        return res.status(404).send({ msg: 'Game room not found, most likely internal error. Make sure you enter room code again' });
+    }
+    if (!gameState.players || gameState.players.length < 2) {
+        return res.status(400).send({ msg: 'Not enough players to form teams' });
+      }
+    // reset the teams before adding to them
+    gameState.blueTeam = [];
+    gameState.greenTeam = [];
+    //add every other player to team
+    gameState.players.forEach((player,index) => {
+        if (index % 2 === 0){
+            gameState.blueTeam.push(player);
+        } else{
+            gameState.greenTeam.push(player);
+        }
+    });
+
+    res.status(200).send({ msg: 'Teams have been set successfully', gameState });
+
+}
+)
 
 //Round Management
 
