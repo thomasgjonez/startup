@@ -9,25 +9,32 @@ export function CreateAccount({ onAuthChange }) {
   const [error, setError] = useState('');
   const navigate = useNavigate();
 
-  const handleSignup = (e) => {
+  const handleSignup = async (e) => {
     e.preventDefault();
-
-  // Get stored users from localStorage
-  const storedUsers = JSON.parse(localStorage.getItem("users")) || [];
-
-  // Check if the username already exists
-  if (storedUsers.includes(signupUser)) {
-    setError("Username already taken.");
-    return;
-  }
-
-  // Save new user to localStorage
-  storedUsers.push(signupUser);
-  localStorage.setItem("users", JSON.stringify(storedUsers));
-
-  // Log in the new user
-  onAuthChange(signupUser, AuthState.Authenticated);
-  navigate("/game");
+  
+    try {
+      const response = await fetch('/api/auth/create', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username: signupUser,
+          email: signupEmail,
+          password: signupPassword,
+        }),
+      });
+  
+      if (!response.ok) {
+        const errorData = await response.json();
+        setError(errorData.msg || 'Error creating account');
+        return;
+      }
+      const data = await response.json();
+      localStorage.setItem('username', signupUser);
+      onAuthChange(data.username, AuthState.Authenticated);
+      navigate('/game');
+    } catch (error) {
+      setError('An error occurred. Please try again.');
+    }
   };
 
   return (
