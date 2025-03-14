@@ -1,40 +1,53 @@
 import React, { useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { Button } from 'react-bootstrap';
 
-export function Unauthenticated(props) {
+export function Unauthenticated({onLogin}) {
   const [userName, setUserName] = useState('');
   const [password, setPassword] = useState('');
-  const [displayError, setDisplayError] = useState(null);
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
 
-  async function loginUser() {
+  const handleLogin = async (e) => {
+    e.preventDefault();
+      
     if (!userName || !password) {
-        setDisplayError("Username and password are required.");
-        return;
-      }
-    
-      const storedUsers = JSON.parse(localStorage.getItem("users")) || [];
+      setError("Username and password are required.");
+      return;
+    }
 
-      // Check if the username exists
-      if (!storedUsers.includes(userName)) {
-        setDisplayError("Username not found.");
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          username: userName,
+          password: password,
+        }),
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        setError(errorData.msg || 'Error logging in');
         return;
       }
-    
-      // Save login state
-      localStorage.setItem("auth", JSON.stringify({ loggedIn: true, username: userName }));
-    
-      // Call login handler
-      props.onLogin(userName);
+
+      const data = await response.json();
+      localStorage.setItem("auth", JSON.stringify({ loggedIn: true, username: data.username }));
+      onLogin(data.username);
+      navigate('/game');
+    } catch (err) {
+      setError("An error occurred. Please try again.");
+    }
   }
 
   return (
     <div>
       <h2>Login</h2>
 
-      {displayError && <div className="alert alert-danger">{displayError}</div>}
+      {error && <div className="alert alert-danger">{error}</div>}
 
-      <form onSubmit={(e) => { e.preventDefault(); loginUser(); }}>
+      <form onSubmit={handleLogin}>
         <div className="form-group">
           <label htmlFor="login-user"></label>
           <input
@@ -69,8 +82,6 @@ export function Unauthenticated(props) {
       <p className="mt-3">
         Don't have an account? <NavLink to="/create-account">Create your account.</NavLink>
       </p>
-
-      <NavLink to="/game" className="btn btn-success w-100 mt-2">Play Game!</NavLink>
     </div>
   );
 }
