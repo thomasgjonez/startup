@@ -6,8 +6,9 @@ const app = express();
 
 const authCookieName = 'token';
 
-// The scores and users are saved in memory and disappear whenever the service is restarted.
+// The games and users are saved in memory and disappear whenever the service is restarted.
 let users = [];
+let games = {};
 
 // The service port. In production the front-end code is statically hosted by the service on the same port.
 const port = process.argv.length > 2 ? process.argv[2] : 3000;
@@ -37,7 +38,7 @@ apiRouter.post('/auth/create', async (req, res) => {
     }
   });
 
-  // GetAuth login an existing user
+// GetAuth login an existing user
 apiRouter.post('/auth/login', async (req, res) => {
     const user = await findUser('username', req.body.username);
     if (user) {
@@ -51,7 +52,7 @@ apiRouter.post('/auth/login', async (req, res) => {
     res.status(401).send({ msg: 'Unauthorized' });
   });
   
-  // DeleteAuth logout a user
+// DeleteAuth logout a user
 apiRouter.delete('/auth/logout', async (req, res) => {
     const user = await findUser('token', req.cookies[authCookieName]);
     if (user) {
@@ -61,7 +62,47 @@ apiRouter.delete('/auth/logout', async (req, res) => {
     res.status(204).end();
   });
 
-  
+//Game Room managment section
+apiRouter.post('/game/createOrJoinRoom',(req,res) => {
+    const {roomCode, username} = req.body;
+    if (!roomCode){
+        return res.status(400).send({msg:"Room Code is required"});
+    }
+    if (!username){
+        return res.status(400).send({msg:"Username is required/you need to login in. How did you even get to this screen lol"})
+    }
+    // creates an empty gameState/object with the roomCode
+    let gameState = games[roomCode];
+    //checks to make sure there is no game going on, if not make a gameState
+    if (!gameState){
+        gameState = {
+            roomCode,
+            players: [],         // Temp array to hold all da players, which will be split up later
+            blueTeam: [],        
+            greenTeam: [],
+            blueTeamPts: 0,
+            greenTeamPts: 0,
+            timer: 0,
+            randomWord: '',
+            currentDescriber: null,
+            teamTurn: 'blue',
+        }
+        games[roomCode] = gameState;
+    }
+    //checks to see if player is in the game already, if not-> add them
+    if (!gameState.players.find(player => player.username === username)) {
+        gameState.players.push({ username, guessedWord: '', turn: '' });
+      }
+    
+      res.status(200).send({ msg: 'Joined game', gameState });
+
+});
+
+//Team and Player Setup section
+
+//Round Management
+
+//Game State and updates
 
 // Default error handler
 app.use(function (err, req, res, next) {
