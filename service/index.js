@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs');
 const express = require('express');
 const uuid = require('uuid');
 const app = express();
-const { runGame } = require('./gameHelper');
+const { runGame, pickDescriber, startRound } = require('./gameHelper');
 
 
 const authCookieName = 'token';
@@ -88,6 +88,10 @@ apiRouter.post('/game/createOrJoinRoom',(req,res) => {
             randomWord: '',
             currentDescriber: null,
             teamTurn: 'blue',
+            blueDescriberIndex: 0,
+            greenDescriberIndex: 0,
+            describerResponse: "",
+            winCondition: false
         }
         games[roomCode] = gameState;
     }
@@ -142,6 +146,8 @@ apiRouter.post('/game/start', (req, res) => {
   }
   
   // Start the game!
+  pickDescriber(gameState);
+  startRound(gameState);
   runGame(gameState);
   
   // Immediately respond to the client.
