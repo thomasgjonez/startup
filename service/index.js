@@ -3,6 +3,8 @@ const bcrypt = require('bcryptjs');
 const express = require('express');
 const uuid = require('uuid');
 const app = express();
+const { startRound, endRound, runGame } = require('./gameHelper');
+
 
 const authCookieName = 'token';
 
@@ -128,8 +130,23 @@ apiRouter.post('/game/setTeams', (req, res) => {
 }
 )
 
-//Round Management
-
+//Round Management, pick describer, get random word, start and end rounds, timer etc
+apiRouter.post('/game/start', (req, res) => {
+  const { roomCode } = req.body;
+  if (!roomCode) {
+    return res.status(400).send({ msg: 'Room code is required' });
+  }
+  const gameState = games[roomCode];
+  if (!gameState) {
+    return res.status(404).send({ msg: 'Game room not found' });
+  }
+  
+  // Start the game loop asynchronously.
+  runGame(roomCode);
+  
+  // Immediately respond to the client.
+  res.status(200).send({ msg: `Game started for room ${roomCode}` });
+});
 //Game State and updates
 
 // Default error handler
@@ -138,7 +155,7 @@ app.use(function (err, req, res, next) {
   });
 
 
-//Helper functions/middleware wil go here
+//Helper functions for login will go here
 async function createUser(username, email, password) {
     const passwordHash = await bcrypt.hash(password, 10);
   
