@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs');
 const express = require('express');
 const uuid = require('uuid');
 const app = express();
-const { startRound, endRound, runGame } = require('./gameHelper');
+const { runGame } = require('./gameHelper');
 
 
 const authCookieName = 'token';
@@ -141,8 +141,8 @@ apiRouter.post('/game/start', (req, res) => {
     return res.status(404).send({ msg: 'Game room not found' });
   }
   
-  // Start the game loop asynchronously.
-  runGame(roomCode);
+  // Start the game!
+  runGame(gameState);
   
   // Immediately respond to the client.
   res.status(200).send({ msg: `Game started for room ${roomCode}` });
