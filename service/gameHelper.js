@@ -42,6 +42,16 @@ function endRound(gameState){
       }
 }
 
+function compareWords(gameState, guessedWord){
+    if (gameState.randomWord.trim().toLowerCase() === guessedWord.toLowerCase()){
+        const guessingTeam = gameState.teamTurn === "blue" ? "green" : "blue";
+        gameState.teamTurn = guessingTeam
+        gameState.randomWord = getRandomWord();
+        pickDescriber(gameState);
+    } 
+    //else do nothing, could add extra stuff here
+}
+
 function pickDescriber(gameState) {
     let describer;
     let response = getRandomDescription();
@@ -61,7 +71,7 @@ function pickDescriber(gameState) {
 //section for helper functions
 function getRandomWord() {
     //will need to change to an api call for the dictionary, but lets get the game working first
-    const words = ["apple", "banana", "orange"];
+    const words = ["apple"];
     return words[Math.floor(Math.random() * words.length)];
   }
 
@@ -79,6 +89,7 @@ function getRandomDescription() {
   }
 
   module.exports = {
+    compareWords,
     pickDescriber,
     getRandomWord,
     startRound,

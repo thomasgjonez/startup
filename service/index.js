@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs');
 const express = require('express');
 const uuid = require('uuid');
 const app = express();
-const { runGame, pickDescriber, startRound } = require('./gameHelper');
+const { runGame, pickDescriber, startRound, compareWords } = require('./gameHelper');
 
 
 const authCookieName = 'token';
@@ -153,7 +153,42 @@ apiRouter.post('/game/start', (req, res) => {
   // Immediately respond to the client.
   res.status(200).send({ msg: `Game started for room ${roomCode}` });
 });
+
 //Game State and updates
+apiRouter.post('/game/guessWord', (req, res) => {
+  const { roomCode, guessedWord } = req.body;
+  const gameState = games[roomCode];
+  if (!gameState) {
+    return res.status(404).send({ msg: 'Game room not found' });
+  }
+
+  compareWords(gameState, guessedWord);
+  guessedWord = '';
+
+  res.status(200).send({msg: 'Your guessed word was sent to be compared with the Random Word',
+                          gameState})
+
+})
+
+apiRouter.post('/game/description', (req, res) => {
+  const {roomCode, username, description} = req.body;
+  const gameState = games[roomCode];
+  if (!gameState) {
+    return res.status(404).send({ msg: 'Game room not found' });
+  }
+  //make sure the current describer is the one writting
+  if (!gameState.currentDescriber || gameState.currentDescriber.username !== username) {
+    return res.status(403).send({ msg: 'You are not the current describer' });
+  }
+
+  gameState.describerResponse = description;
+  //testing purposes, frontend will get rid of need for this 
+  console.log(`New description for room ${roomCode}: ${description}`);
+})
+
+//Live Chat section
+//post
+//fetch
 
 // Default error handler
 app.use(function (err, req, res, next) {
