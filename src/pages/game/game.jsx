@@ -214,56 +214,56 @@ export function Game({userName}) {
 
   }
 
-  useEffect(() => {
-    if (guessedWord === randomWord && randomWord !== "") {
-      alert("Team switch");
-      setTeamTurn((prev) => (prev === "blue" ? "green" : "blue")); 
-      setRandomWord(getRandomWord());
-      setGuessedWord("");
-    }
-  }, [guessedWord, randomWord]);
+  // useEffect(() => {
+  //   if (guessedWord === randomWord && randomWord !== "") {
+  //     alert("Team switch");
+  //     setTeamTurn((prev) => (prev === "blue" ? "green" : "blue")); 
+  //     setRandomWord(getRandomWord());
+  //     setGuessedWord("");
+  //   }
+  // }, [guessedWord, randomWord]);
 
-  useEffect(() => {
-    if (!currentDescriber) return;
+  // useEffect(() => {
+  //   if (!currentDescriber) return;
   
-    setBlueTeam((prevBlueTeam) =>
-      prevBlueTeam.map((player) => ({
-        ...player,
-        turn: player.username === currentDescriber.username ? "Describer" : "",
-      }))
-    );
+  //   setBlueTeam((prevBlueTeam) =>
+  //     prevBlueTeam.map((player) => ({
+  //       ...player,
+  //       turn: player.username === currentDescriber.username ? "Describer" : "",
+  //     }))
+  //   );
   
-    setGreenTeam((prevGreenTeam) =>
-      prevGreenTeam.map((player) => ({
-        ...player,
-        turn: player.username === currentDescriber.username ? "Describer" : "",
-      }))
-    );
-  }, [currentDescriber]);
+  //   setGreenTeam((prevGreenTeam) =>
+  //     prevGreenTeam.map((player) => ({
+  //       ...player,
+  //       turn: player.username === currentDescriber.username ? "Describer" : "",
+  //     }))
+  //   );
+  // }, [currentDescriber]);
 
-  useEffect(() => {
-    if (teamsInitialized) {
-      pickDescriber();
-    }
-  }, [teamTurn]);
+  // useEffect(() => {
+  //   if (teamsInitialized) {
+  //     pickDescriber();
+  //   }
+  // }, [teamTurn]);
   
 
-  const endRound = () => {
-    if (teamTurn === "blue") {
-      setGreenTeamPts((prev) => prev + 1);
-    } else {
-      setBlueTeamPts((prev) => prev + 1);
-    }
+  // const endRound = () => {
+  //   if (teamTurn === "blue") {
+  //     setGreenTeamPts((prev) => prev + 1);
+  //   } else {
+  //     setBlueTeamPts((prev) => prev + 1);
+  //   }
 
 
-    // Check for win condition
-    if (blueTeamPts === 5 || greenTeamPts === 5) {
-      setWinCondition(true);
-      alert(`${blueTeamPts === 5 ? "Blue Team" : "Green Team"} Wins!`);
-    } else {
-      startRound();
-    }
-  };
+  //   // Check for win condition
+  //   if (blueTeamPts === 5 || greenTeamPts === 5) {
+  //     setWinCondition(true);
+  //     alert(`${blueTeamPts === 5 ? "Blue Team" : "Green Team"} Wins!`);
+  //   } else {
+  //     startRound();
+  //   }
+  // };
 
   const getBluePiecePosition = (score) => {
     return predefinedBluePositions[score];
@@ -378,6 +378,8 @@ export function Game({userName}) {
         const data = await response.json();
   
         if (data) {
+          setBlueTeam(data.blueTeam);
+          setGreenTeam(data.greenTeam);
           setGameState(data);
           setTimer(data.timer);
           setDescriberResponse(data.describerResponse);

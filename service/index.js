@@ -126,6 +126,7 @@ apiRouter.post('/game/createOrJoinRoom',(req,res) => {
       // reset the teams before adding to them
       gameState.blueTeam = [];
       gameState.greenTeam = [];
+      resetGame(gameState);
       //add every other player to team
       gameState.players.forEach((player,index) => {
           if (index % 2 === 0){
