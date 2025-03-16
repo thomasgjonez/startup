@@ -186,9 +186,17 @@ apiRouter.post('/game/description', (req, res) => {
   console.log(`New description for room ${roomCode}: ${description}`);
 })
 
+apiRouter.get('/game/state', (req, res) => {
+  const {roomCode} = req.body;
+  const gameState = games[roomCode];
+  if (!gameState) {
+    return res.status(404).send({ msg: 'Game room not found' });
+  }
+  return res.status(200).json(gameState);
+})
+
 //Live Chat section
 //post
-//fetch
 
 // Default error handler
 app.use(function (err, req, res, next) {

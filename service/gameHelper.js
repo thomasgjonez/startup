@@ -83,18 +83,18 @@ async function getRandomWord() {
       }
   }
 
-//will need to change to an endpoint or maybe just get rid off all together
-function getRandomDescription() {
-    const descriptions = [
-      "It's a red fruit",
-      "It's red and you can eat it",
-      "A red fruit that's sweet and crispy",
-      "Fruit that comes in three colors: red, gold, and green",
-      "Fruit that comes from a tree",
-      "A _____ a day keeps the doctor away"
-    ];
-    return descriptions[Math.floor(Math.random() * descriptions.length)];
-  }
+//Endpoint makes this obsolete, but keep it just in case
+// function getRandomDescription() {
+//     const descriptions = [
+//       "It's a red fruit",
+//       "It's red and you can eat it",
+//       "A red fruit that's sweet and crispy",
+//       "Fruit that comes in three colors: red, gold, and green",
+//       "Fruit that comes from a tree",
+//       "A _____ a day keeps the doctor away"
+//     ];
+//     return descriptions[Math.floor(Math.random() * descriptions.length)];
+//   }
 
   module.exports = {
     compareWords,
