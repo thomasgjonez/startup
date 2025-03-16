@@ -9,8 +9,8 @@ const { runGame, pickDescriber, startRound, compareWords } = require('./gameHelp
 const authCookieName = 'token';
 
 // The games and users are saved in memory and disappear whenever the service is restarted.
-let users = [];
-let games = {};
+const users = [];
+const games = {};
 
 // The service port. In production the front-end code is statically hosted by the service on the same port.
 const port = process.argv.length > 2 ? process.argv[2] : 3000;
@@ -66,70 +66,76 @@ apiRouter.delete('/auth/logout', async (req, res) => {
 
 //Game Room managment section
 apiRouter.post('/game/createOrJoinRoom',(req,res) => {
-    const {roomCode, username} = req.body;
-    if (!roomCode){
-        return res.status(400).send({msg:'Room Code is required'});
-    }
-    if (!username){
-        return res.status(400).send({msg:'Username is required/you need to login in. How did you even get to this screen lol'})
-    }
-    // creates an empty gameState/object with the roomCode
-    let gameState = games[roomCode];
-    //checks to make sure there is no game going on, if not make a gameState
-    if (!gameState){
-        gameState = {
-            roomCode,
-            players: [],         // Temp array to hold all da players, which will be split up later
-            blueTeam: [],        
-            greenTeam: [],
-            blueTeamPts: 0,
-            greenTeamPts: 0,
-            timer: 0,
-            randomWord: '',
-            currentDescriber: null,
-            teamTurn: 'blue',
-            blueDescriberIndex: 0,
-            greenDescriberIndex: 0,
-            describerResponse: "",
-            winCondition: false
-        }
-        games[roomCode] = gameState;
-    }
-    //checks to see if player is in the game already, if not-> add them
-    if (!gameState.players.find(player => player.username === username)) {
-        gameState.players.push({ username, guessedWord: '', turn: '' });
+    console.log('createOrJoinRoom endpoint called')
+    try{
+      const {roomCode, username} = req.body;
+      if (!roomCode){
+          return res.status(400).send({msg:'Room Code is required'});
       }
-    
-      res.status(200).send({ msg: 'Joined game', gameState });
-
-});
-
-//Team and Player Setup section
-apiRouter.post('/game/setTeams', (req, res) => {
-    const { roomCode } = req.body;
-    if (!roomCode){
-        return res.status(400).send({msg:'Room Code is required'});
-    }
-    const gameState = games[roomCode];
-    if (!gameState) {
-        return res.status(404).send({ msg: 'Game room not found, most likely internal error. Make sure you enter room code again' });
-    }
-    if (!gameState.players || gameState.players.length < 2) {
-        return res.status(400).send({ msg: 'Not enough players to form teams' });
+      if (!username){
+          return res.status(400).send({msg:'Username is required/you need to login in. How did you even get to this screen lol'})
       }
-    // reset the teams before adding to them
-    gameState.blueTeam = [];
-    gameState.greenTeam = [];
-    //add every other player to team
-    gameState.players.forEach((player,index) => {
-        if (index % 2 === 0){
-            gameState.blueTeam.push(player);
-        } else{
-            gameState.greenTeam.push(player);
+      // creates an empty gameState/object with the roomCode
+      let gameState = games[roomCode];
+      //checks to make sure there is no game going on, if not make a gameState
+      if (!gameState){
+          gameState = {
+              roomCode,
+              players: [],         // Temp array to hold all da players, which will be split up later
+              blueTeam: [],        
+              greenTeam: [],
+              blueTeamPts: 0,
+              greenTeamPts: 0,
+              timer: 0,
+              randomWord: '',
+              currentDescriber: null,
+              teamTurn: 'blue',
+              blueDescriberIndex: 0,
+              greenDescriberIndex: 0,
+              describerResponse: "",
+              winCondition: false
+          }
+          games[roomCode] = gameState;
+      }
+      //checks to see if player is in the game already, if not-> add them
+      if (!gameState.players.find(player => player.username === username)) {
+          gameState.players.push({ username, guessedWord: '', turn: '' });
         }
-    });
+      
+        res.status(200).send({ msg: 'Joined game', gameState });
+      }catch(error){
+          console.error("Error in /game/createOrJoinRoom:", error);
+          return res.status(500).send({ msg: 'Internal Server Error' });
+      }
 
-    res.status(200).send({ msg: 'Teams have been set successfully', gameState });
+  });
+
+  //Team and Player Setup section
+  apiRouter.post('/game/setTeams', (req, res) => {
+      const { roomCode } = req.body;
+      if (!roomCode){
+          return res.status(400).send({msg:'Room Code is required'});
+      }
+      const gameState = games[roomCode];
+      if (!gameState) {
+          return res.status(404).send({ msg: 'Game room not found, most likely internal error. Make sure you enter room code again' });
+      }
+      if (!gameState.players || gameState.players.length < 2) {
+          return res.status(400).send({ msg: 'Not enough players to form teams' });
+        }
+      // reset the teams before adding to them
+      gameState.blueTeam = [];
+      gameState.greenTeam = [];
+      //add every other player to team
+      gameState.players.forEach((player,index) => {
+          if (index % 2 === 0){
+              gameState.blueTeam.push(player);
+          } else{
+              gameState.greenTeam.push(player);
+          }
+      });
+
+      res.status(200).send({ msg: 'Teams have been set successfully', gameState });
 
 }
 )

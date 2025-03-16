@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import './game.css'
 
 export function Game({userName}) {
+  const [gameState, setGameState] = useState(null);
   const [roomCode, setRoomCode] = useState("");
   const [timer, setTimer] = useState();
   const [userGuess, setUserGuess] = useState("");
@@ -39,16 +40,16 @@ export function Game({userName}) {
     { left: "500px", top: "10px" },  // Position for score 6
   ];
 
-  useEffect(() => {
-    const storedCode = localStorage.getItem("roomCode");
-    if (storedCode) {
-      setRoomCode(storedCode);
-    }
-  }, []);
+  // useEffect(() => {
+  //   const storedCode = localStorage.getItem("roomCode");
+  //   if (storedCode) {
+  //     setRoomCode(storedCode);
+  //   }
+  // }, []);
 
-  const handleRoomChange = (event) => {
-    setRoomCode(event.target.value);
-  };
+  // const handleRoomChange = (event) => {
+  //   setRoomCode(event.target.value);
+  // };
   const handleGuess = () => {
     setBlueTeam((prevBlueTeam) =>
       prevBlueTeam.map((player) =>
@@ -272,6 +273,29 @@ export function Game({userName}) {
     return predefinedGreenPositions[score];
   };
 
+  //New Section for updated game frontend code with endpoint calls
+
+  const joinRoom = async (e) => {
+    e.preventDefault();  // Prevents page refresh/navigation
+    try {
+      const response = await fetch('/api/game/createOrJoinRoom', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ roomCode, username: userName }),
+      });
+  
+      if (!response.ok) {
+        throw new Error(`Server error: ${response.status}`);
+      }
+  
+      const data = await response.json();
+      setGameState(data.gameState);
+    } catch (error) {
+      console.error("Error joining room:", error);
+    }
+  };
+  
+
 
   useEffect(() => {
     const bluePiecePosition = getBluePiecePosition(blueTeamPts);
@@ -328,7 +352,7 @@ export function Game({userName}) {
           <h2>Time Left: {timer} seconds</h2>
         </div>
           <h2>Room Code: {roomCode} </h2>
-          <form action="#" method="POST" className="w-75 pb-1">
+          <form onSubmit={joinRoom} className="w-75 pb-1">
             <label htmlFor="room-code"></label>
             <input
               type="text"
@@ -336,9 +360,9 @@ export function Game({userName}) {
               className="form-control mb-2"
               placeholder="Enter Room Code"
               value={roomCode}
-              onChange={handleRoomChange}
-              onKeyDown={handleKeyPress}
+              onChange={(e) => setRoomCode(e.target.value)}
             />
+            <button type="submit" className="btn btn-outline-secondary w100">Join Room</button>
           </form>
           <div>
           <button className="btn btn-primary w100" onClick={initializeTeams }>Set Teams!</button>
