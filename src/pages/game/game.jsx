@@ -323,7 +323,7 @@ export function Game({userName}) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ roomCode })
       });
-      
+
       if (!response.ok) {
         throw new Error(`Server error: ${response.status}`);
       }
@@ -335,6 +335,36 @@ export function Game({userName}) {
       console.error("Error starting game:", error);
     }
   }
+
+  useEffect(() => {
+    const fetchGameState = async () => {
+      try {
+        const response = await fetch(`/api/game/state?roomCode=${roomCode}`, {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' }
+        });
+        const data = await response.json();
+  
+        if (data) {
+          setGameState(data);
+          setTimer(data.timer);
+          setDescriberResponse(data.describerResponse);
+          setCurrentDescriber(data.currentDescriber);
+          setBlueTeamPts(data.blueTeamPts);
+          setGreenTeamPts(data.greenTeamPts);
+          setTeamTurn(data.teamTurn);
+        }
+      } catch (error) {
+        console.error("Error fetching game state:", error);
+      }
+    };
+  
+    // Poll game state every second
+    const interval = setInterval(fetchGameState, 1000);
+  
+    return () => clearInterval(interval); // Cleanup on unmount
+  }, [roomCode]);
+  
   
 
 

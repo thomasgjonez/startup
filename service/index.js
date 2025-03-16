@@ -206,7 +206,7 @@ apiRouter.post('/game/description', (req, res) => {
 })
 
 apiRouter.get('/game/state', (req, res) => {
-  const {roomCode} = req.body;
+  const {roomCode} = req.query;
   const gameState = games[roomCode];
   if (!gameState) {
     return res.status(404).send({ msg: 'Game room not found' });
