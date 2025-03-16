@@ -315,6 +315,26 @@ export function Game({userName}) {
       console.error("Error setting teams:", error);
     }
   };
+
+  const playGame = async () => {
+    try {
+      const response = await fetch('/api/game/start', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ roomCode })
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Server error: ${response.status}`);
+      }
+  
+      const data = await response.json(); // Parse the JSON response
+      console.log("Game started successfully:", data);
+
+    } catch (error) {
+      console.error("Error starting game:", error);
+    }
+  }
   
 
 
@@ -387,7 +407,7 @@ export function Game({userName}) {
           </form>
           <div>
           <button className="btn btn-primary w100" onClick={setTeams }>Set Teams!</button>
-          <button className="btn btn-success w100" onClick={initializeGame }>Play Game!</button>
+          <button className="btn btn-success w100" onClick={playGame }>Play Game!</button>
           </div>
           <form action="#" method="post" className="w-50 mt-2">
             <input

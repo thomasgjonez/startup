@@ -23,11 +23,11 @@ export default function MainLayout({ userName }) {
       }, 4000 )
     }
   };
-  setInterval(() => {
-    // This will be replaced with WebSocket messages
-    const userName = `User-${Math.floor(Math.random() * 100)}`;
-    setMessages((prev) => [...prev, { username: userName, text: "Hi!" }]);;
-  }, 5000);
+  // setInterval(() => {
+  //   // This will be replaced with WebSocket messages
+  //   const userName = `User-${Math.floor(Math.random() * 100)}`;
+  //   setMessages((prev) => [...prev, { username: userName, text: "Hi!" }]);;
+  // }, 5000);
 
   useEffect(() => {
     if (chatBoxRef.current) {

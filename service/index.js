@@ -142,22 +142,35 @@ apiRouter.post('/game/createOrJoinRoom',(req,res) => {
 
 //Round Management, pick describer, get random word, start and end rounds, timer etc
 apiRouter.post('/game/start', (req, res) => {
+  console.log('start game endpoint hit');
   const { roomCode } = req.body;
   if (!roomCode) {
+    console.log('Room code not found');
     return res.status(400).send({ msg: 'Room code is required' });
   }
   const gameState = games[roomCode];
   if (!gameState) {
+    console.log('game state not found');
     return res.status(404).send({ msg: 'Game room not found' });
   }
   
-  // Start the game!
-  pickDescriber(gameState);
-  startRound(gameState);
-  runGame(gameState);
-  
-  // Immediately respond to the client.
-  res.status(200).send({ msg: `Game started for room ${roomCode}` });
+  try {
+    console.log("✅ Picking describer...");
+    pickDescriber(gameState);
+
+    console.log("✅ Starting round...");
+    startRound(gameState);
+
+    console.log("✅ Running game logic...");
+    runGame(gameState);
+
+    console.log("🎮 Game started successfully for room:", roomCode);
+    res.status(200).send({ msg: `Game started for room ${roomCode}`, gameState });
+
+  } catch (error) {
+    console.error("❌ Error in /game/start:", error);
+    res.status(500).send({ msg: 'Internal Server Error' });
+  }
 });
 
 //Game State and updates

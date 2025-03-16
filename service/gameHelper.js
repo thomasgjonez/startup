@@ -22,9 +22,9 @@ function runGame(gameState){
       roundLoop();
 }
 
-function startRound(gameState){
+async function startRound(gameState){
     if (gameState.winCondition) return;
-        gameState.timer = 5; //5 second runs for testing, I'll change in the future
+        gameState.timer = 10; //5 second runs for testing, I'll change in the future
         gameState.randomWord = getRandomWord();
         console.log(`Round started. New word: ${gameState.randomWord}`);
 }
@@ -56,7 +56,6 @@ function compareWords(gameState, guessedWord){
 
 function pickDescriber(gameState) {
     let describer;
-    let response = getRandomDescription();
   
     if (gameState.teamTurn === "blue") {
       describer = gameState.blueTeam[gameState.blueDescriberIndex % gameState.blueTeam.length];
@@ -67,21 +66,17 @@ function pickDescriber(gameState) {
     }
   
     gameState.currentDescriber = describer;
-    gameState.describerResponse = response;
+    gameState.describerResponse = "";//this will be set with the description endpoint
   }
 
 //section for helper functions
-async function getRandomWord() {
-    try {
-        const response = await axios.get('https://random-words-api.vercel.app/word');
-        // response is an array that consists of a word, definition, how to say it etc
-        const wordObj = response.data[0];
-        return wordObj.word;  
-      } catch (error) {
-        console.error('Error fetching random word:', error);
-        return 'catchPhrase'; // Fallback word in case of error
-      }
-  }
+
+function getRandomWord() {
+    // waiting on API from wordnik
+    const words = ["apple"];
+    return words[Math.floor(Math.random() * words.length)];
+}
+
 
 //Endpoint makes this obsolete, but keep it just in case
 // function getRandomDescription() {
