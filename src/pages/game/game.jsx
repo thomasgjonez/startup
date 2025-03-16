@@ -89,16 +89,16 @@ export function Game({userName}) {
     }
   }
 
-  useEffect(() => {
-    if (timer > 0) {
-      const countdown = setInterval(() => {
-        setTimer((prevTime) => prevTime - 1);
-      }, 1000);
-      return () => clearInterval(countdown);
-    } else if (timer === 0) {
-      endRound();
-    }
-  }, [timer]);
+  // useEffect(() => {
+  //   if (timer > 0) {
+  //     const countdown = setInterval(() => {
+  //       setTimer((prevTime) => prevTime - 1);
+  //     }, 1000);
+  //     return () => clearInterval(countdown);
+  //   } else if (timer === 0) {
+  //     endRound();
+  //   }
+  // }, [timer]);
 
 // will need to adjsut this later on when we have service/database stuff
   const generateRandomUsers = (num) => {
@@ -360,7 +360,7 @@ export function Game({userName}) {
     };
   
     // Poll game state every second
-    const interval = setInterval(fetchGameState, 1000);
+    const interval = setInterval(fetchGameState, 5000);
   
     return () => clearInterval(interval); // Cleanup on unmount
   }, [roomCode]);

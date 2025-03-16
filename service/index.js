@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs');
 const express = require('express');
 const uuid = require('uuid');
 const app = express();
-const { runGame, pickDescriber, startRound, compareWords } = require('./gameHelper');
+const { runGame, pickDescriber, startRound, compareWords, getRandomWord, resetGame } = require('./gameHelper');
 
 
 const authCookieName = 'token';
@@ -153,22 +153,15 @@ apiRouter.post('/game/start', (req, res) => {
     console.log('game state not found');
     return res.status(404).send({ msg: 'Game room not found' });
   }
-  
+  resetGame(gameState);
   try {
-    console.log("✅ Picking describer...");
     pickDescriber(gameState);
-
-    console.log("✅ Starting round...");
     startRound(gameState);
-
-    console.log("✅ Running game logic...");
     runGame(gameState);
 
-    console.log("🎮 Game started successfully for room:", roomCode);
     res.status(200).send({ msg: `Game started for room ${roomCode}`, gameState });
 
   } catch (error) {
-    console.error("❌ Error in /game/start:", error);
     res.status(500).send({ msg: 'Internal Server Error' });
   }
 });

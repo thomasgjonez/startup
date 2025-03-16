@@ -36,7 +36,7 @@ function endRound(gameState){
         gameState.blueTeamPts++;
       }
     
-      if (gameState.blueTeamPts >= 7 || gameState.greenTeamPts >= 7) {
+      if (gameState.blueTeamPts >= 6 || gameState.greenTeamPts >= 6) {
         gameState.winCondition = true;
         console.log("Game over.");
       } else {
@@ -77,6 +77,19 @@ function getRandomWord() {
     return words[Math.floor(Math.random() * words.length)];
 }
 
+function resetGame(gameState){
+  gameState.blueDescriberIndex = 0;
+  gameState.greenDescriberIndex = 0;
+  gameState.greenTeamPts = 0;
+  gameState.blueTeamPts = 0;
+  gameState.timer = 0;
+  gameState.random = '';
+  gameState.currentDescriber = null;
+  gameState.describerResponse = "";
+  gameState.teamTurn = 'blue';
+  gameState.winCondition = false;
+}
+
 
 //Endpoint makes this obsolete, but keep it just in case
 // function getRandomDescription() {
@@ -97,5 +110,6 @@ function getRandomWord() {
     getRandomWord,
     startRound,
     endRound,
-    runGame
+    runGame,
+    resetGame
   };
