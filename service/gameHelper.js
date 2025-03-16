@@ -1,3 +1,5 @@
+const axios = require('axios');
+
 //section of running the game/rounds
 function runGame(gameState){
     console.log("roundLoop will be called");//testing purposes, delete later;
@@ -69,10 +71,16 @@ function pickDescriber(gameState) {
   }
 
 //section for helper functions
-function getRandomWord() {
-    //will need to change to an api call for the dictionary, but lets get the game working first
-    const words = ["apple"];
-    return words[Math.floor(Math.random() * words.length)];
+async function getRandomWord() {
+    try {
+        const response = await axios.get('https://random-words-api.vercel.app/word');
+        // response is an array that consists of a word, definition, how to say it etc
+        const wordObj = response.data[0];
+        return wordObj.word;  
+      } catch (error) {
+        console.error('Error fetching random word:', error);
+        return 'catchPhrase'; // Fallback word in case of error
+      }
   }
 
 //will need to change to an endpoint or maybe just get rid off all together
