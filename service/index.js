@@ -168,19 +168,31 @@ apiRouter.post('/game/start', (req, res) => {
 
 //Game State and updates
 apiRouter.post('/game/guessWord', (req, res) => {
+  console.log("Received guessWord request:", req.body);
+
   const { roomCode, guessedWord } = req.body;
-  const gameState = games[roomCode];
-  if (!gameState) {
-    return res.status(404).send({ msg: 'Game room not found' });
+  
+  if (!roomCode || !guessedWord) {
+      console.error("Missing roomCode or guessedWord");
+      return res.status(400).send({ msg: 'roomCode and guessedWord are required' });
   }
 
-  compareWords(gameState, guessedWord);
-  guessedWord = '';
+  const gameState = games[roomCode];
+  
+  if (!gameState) {
+      console.error(`Game room not found: ${roomCode}`);
+      return res.status(404).send({ msg: 'Game room not found' });
+  }
 
-  res.status(200).send({msg: 'Your guessed word was sent to be compared with the Random Word',
-                          gameState})
+  try {
+      compareWords(gameState, guessedWord);
+      res.status(200).send({ msg: 'Guess submitted successfully', gameState });
+  } catch (error) {
+      console.error("Error processing guess:", error);
+      res.status(500).send({ msg: 'Internal Server Error' });
+  }
+});
 
-})
 
 apiRouter.post('/game/description', (req, res) => {
   const {roomCode, username, description} = req.body;

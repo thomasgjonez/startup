@@ -50,44 +50,44 @@ export function Game({userName}) {
   // const handleRoomChange = (event) => {
   //   setRoomCode(event.target.value);
   // };
-  const handleGuess = () => {
-    setBlueTeam((prevBlueTeam) =>
-      prevBlueTeam.map((player) =>
-        player.username === userName
-          ? { ...player, guessedWord: userGuess }
-          : player
-      )
-    );
+  // const handleGuess = () => {
+  //   setBlueTeam((prevBlueTeam) =>
+  //     prevBlueTeam.map((player) =>
+  //       player.username === userName
+  //         ? { ...player, guessedWord: userGuess }
+  //         : player
+  //     )
+  //   );
   
-    setGreenTeam((prevGreenTeam) =>
-      prevGreenTeam.map((player) =>
-        player.username === userName
-          ? { ...player, guessedWord: userGuess }
-          : player
-      )
-    );
+  //   setGreenTeam((prevGreenTeam) =>
+  //     prevGreenTeam.map((player) =>
+  //       player.username === userName
+  //         ? { ...player, guessedWord: userGuess }
+  //         : player
+  //     )
+  //   );
 
-    setGuessedWord(userGuess);
-    setUserGuess("");
+  //   setGuessedWord(userGuess);
+  //   setUserGuess("");
 
-    localStorage.setItem("blueTeam", JSON.stringify(blueTeam));
-    localStorage.setItem("greenTeam", JSON.stringify(greenTeam));
-  };
+  //   localStorage.setItem("blueTeam", JSON.stringify(blueTeam));
+  //   localStorage.setItem("greenTeam", JSON.stringify(greenTeam));
+  // };
 
   // Handle Enter key press
-  const handleKeyPress = (event) => {
-    if (event.key === "Enter") {
-      event.preventDefault();
-      localStorage.setItem("roomCode", roomCode);
-      alert("Room code saved!");
-    }
-  }
-  const handleKeyPressforWord = (event) => {
-    if (event.key === "Enter") {
-      event.preventDefault();
-      handleGuess();
-    }
-  }
+  // const handleKeyPress = (event) => {
+  //   if (event.key === "Enter") {
+  //     event.preventDefault();
+  //     localStorage.setItem("roomCode", roomCode);
+  //     alert("Room code saved!");
+  //   }
+  // }
+  // const handleKeyPressforWord = (event) => {
+  //   if (event.key === "Enter") {
+  //     event.preventDefault();
+  //     handleGuess();
+  //   }
+  // }
 
   // useEffect(() => {
   //   if (timer > 0) {
@@ -335,6 +335,38 @@ export function Game({userName}) {
       console.error("Error starting game:", error);
     }
   }
+  const handleKeyPressforWord = async (event) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+
+      if (!roomCode || !userGuess.trim()) {
+          console.warn("Room code or guessed word is missing.");
+          return;
+      }
+      console.log("Submitting guess:", { roomCode, guessedWord: userGuess });
+      try {
+          const response = await fetch('/api/game/guessWord', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ roomCode, guessedWord: userGuess })
+          });
+
+          if (!response.ok) {
+              throw new Error(`Server error: ${response.status}`);
+          }
+
+          const data = await response.json();
+          console.log("Guess submitted:", data);
+
+      } catch (error) {
+          console.error("Error submitting guess:", error);
+      }
+
+      // Reset input field after submitting
+      setUserGuess("");
+  }
+  }
+
 
   useEffect(() => {
     const fetchGameState = async () => {
