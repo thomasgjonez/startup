@@ -81,9 +81,9 @@ apiRouter.post('/game/createOrJoinRoom',(req,res) => {
       if (!gameState){
           gameState = {
               roomCode,
-              players: [],         // Temp array to hold all da players, which will be split up later
-              blueTeam: [],        
-              greenTeam: [],
+              players: {},         // Temp dictionary to hold all da players, which will be split up later
+              blueTeam: {},        
+              greenTeam: {},
               blueTeamPts: 0,
               greenTeamPts: 0,
               timer: 0,
@@ -98,8 +98,8 @@ apiRouter.post('/game/createOrJoinRoom',(req,res) => {
           games[roomCode] = gameState;
       }
       //checks to see if player is in the game already, if not-> add them
-      if (!gameState.players.find(player => player.username === username)) {
-          gameState.players.push({ username, guessedWord: '', turn: '' });
+      if (!gameState.players[username]) {
+        gameState.players[username] = { guessedWord: '', turn: '' };
         }
       
         res.status(200).send({ msg: 'Joined game', gameState });
@@ -124,17 +124,18 @@ apiRouter.post('/game/createOrJoinRoom',(req,res) => {
           return res.status(400).send({ msg: 'Not enough players to form teams' });
         }
       // reset the teams before adding to them
-      gameState.blueTeam = [];
-      gameState.greenTeam = [];
+      gameState.blueTeam = {};
+      gameState.greenTeam = {};
       resetGame(gameState);
       //add every other player to team
-      gameState.players.forEach((player,index) => {
-          if (index % 2 === 0){
-              gameState.blueTeam.push(player);
-          } else{
-              gameState.greenTeam.push(player);
-          }
-      });
+      const playerNames = Object.keys(gameState.players);
+      playerNames.forEach((username, index) => {
+        if (index % 2 === 0) {
+            gameState.blueTeam[username] = { guessedWord: '', turn: '' };
+        } else {
+            gameState.greenTeam[username] = { guessedWord: '', turn: '' };
+        }
+    });
 
       res.status(200).send({ msg: 'Teams have been set successfully', gameState });
 
@@ -171,9 +172,9 @@ apiRouter.post('/game/start', (req, res) => {
 apiRouter.post('/game/guessWord', (req, res) => {
   console.log("Received guessWord request:", req.body);
 
-  const { roomCode, guessedWord } = req.body;
+  const { roomCode, guessedWord, username } = req.body;
   
-  if (!roomCode || !guessedWord) {
+  if (!roomCode || !guessedWord || !username) {
       console.error("Missing roomCode or guessedWord");
       return res.status(400).send({ msg: 'roomCode and guessedWord are required' });
   }
@@ -186,6 +187,17 @@ apiRouter.post('/game/guessWord', (req, res) => {
   }
 
   try {
+      if (gameState.blueTeam[username]) {
+        gameState.blueTeam[username].guessedWord = guessedWord;
+    } else if (gameState.greenTeam[username]) {
+        gameState.greenTeam[username].guessedWord = guessedWord;
+    } else {
+        console.error(`Player ${username} not found in any team`);
+        return res.status(404).send({ msg: 'Player not found in any team' });
+    }
+
+      console.log(`Updated guessed word for ${username}: ${guessedWord}`);
+
       compareWords(gameState, guessedWord);
       res.status(200).send({ msg: 'Guess submitted successfully', gameState });
   } catch (error) {

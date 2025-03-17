@@ -56,24 +56,24 @@ function compareWords(gameState, guessedWord){
 }
 
 function pickDescriber(gameState) {
-    if (!gameState.blueTeam.length || !gameState.greenTeam.length) {
+    let currentTeam = gameState.teamTurn === "blue" ? gameState.blueTeam : gameState.greenTeam;
+    let teamKeys = Object.keys(currentTeam);
+    let describerIndex = gameState.teamTurn === "blue" ? gameState.blueDescriberIndex : gameState.greenDescriberIndex;
+  
+    if (teamKeys.length === 0) {
       console.warn("Teams are empty! Cannot pick describer.");
       return;
     }
-    let describer;
-  
+
+    let selectedDescriber = teamKeys[describerIndex % teamKeys.length];
+    gameState.currentDescriber = { username: selectedDescriber };
+
     if (gameState.teamTurn === "blue") {
-      describer = gameState.blueTeam[gameState.blueDescriberIndex % gameState.blueTeam.length];
-      gameState.blueDescriberIndex = (gameState.blueDescriberIndex + 1) % gameState.blueTeam.length;
+        gameState.blueDescriberIndex = (describerIndex + 1) % teamKeys.length;
     } else {
-      describer = gameState.greenTeam[gameState.greenDescriberIndex % gameState.greenTeam.length];
-      gameState.greenDescriberIndex = (gameState.greenDescriberIndex + 1) % gameState.greenTeam.length;
+        gameState.greenDescriberIndex = (describerIndex + 1) % teamKeys.length;
     }
-    if (!describer) {
-      console.warn("No describer found! Check team data.");
-    }
-  
-    gameState.currentDescriber = describer;
+    
     gameState.describerResponse = "";//this will be set with the description endpoint
   }
 
@@ -102,9 +102,9 @@ function hardReset(gameState){
   setTimeout(() => {
     if (gameState) {
       gameState.roomCode = "";
-      gameState.players = [];
-      gameState.blueTeam = [];
-      gameState.greenTeam = [];
+      gameState.players = {};
+      gameState.blueTeam = {};
+      gameState.greenTeam = {};
       gameState.blueTeamPts = 0;
       gameState.greenTeamPts = 0;
       gameState.timer = 0;

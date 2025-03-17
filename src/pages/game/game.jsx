@@ -8,10 +8,10 @@ export function Game({userName}) {
   const [timer, setTimer] = useState();
   const [userGuess, setUserGuess] = useState("");
   const [guessedWord, setGuessedWord] = useState("");
-  const [blueTeam, setBlueTeam] = useState([]);
+  const [blueTeam, setBlueTeam] = useState({});
   const [blueTeamPts, setBlueTeamPts] = useState(0);
   const [greenTeamPts, setGreenTeamPts] = useState(0);
-  const [greenTeam, setGreenTeam] = useState([]);
+  const [greenTeam, setGreenTeam] = useState({});
   const [teamsInitialized, setTeamsInitialized] = useState(false);
   const [teamTurn, setTeamTurn] = useState("blue");
   const [randomWord, setRandomWord] = useState("");
@@ -152,26 +152,29 @@ export function Game({userName}) {
   useEffect(() => {
     if (!currentDescriber) return;
   
-    setBlueTeam((prevBlueTeam) =>
-      prevBlueTeam.map((player) => ({
-        ...player,
-        turn: player.username === currentDescriber.username ? "Describer" : "",
-      }))
-    );
+    setBlueTeam((prevBlueTeam) => {
+      const updatedBlueTeam = Object.entries(prevBlueTeam).reduce((acc, [username, player]) => {
+        acc[username] = {
+          ...player,
+          turn: username === currentDescriber.username ? "Describer" : "",
+        };
+        return acc;
+      }, {});
+      return updatedBlueTeam;
+    });
   
-    setGreenTeam((prevGreenTeam) =>
-      prevGreenTeam.map((player) => ({
-        ...player,
-        turn: player.username === currentDescriber.username ? "Describer" : "",
-      }))
-    );
-  
-    // Check if the current user is the describer
-    if (currentDescriber.username === userName) {
-      setIsUserDescriber(true);
-    } else {
-      setIsUserDescriber(false);
-    }
+    setGreenTeam((prevGreenTeam) => {
+      const updatedGreenTeam = Object.entries(prevGreenTeam).reduce((acc, [username, player]) => {
+        acc[username] = {
+          ...player,
+          turn: username === currentDescriber.username ? "Describer" : "",
+        };
+        return acc;
+      }, {});
+      return updatedGreenTeam;
+    });
+
+    setIsUserDescriber(currentDescriber.username === userName);
   }, [currentDescriber]);
   
   useEffect(() => {
@@ -338,6 +341,8 @@ export function Game({userName}) {
       console.error("Error starting game:", error);
     }
   }
+
+  //set guess endpoint
   const handleKeyPressforWord = async (event) => {
     if (event.key === "Enter") {
       event.preventDefault();
@@ -351,7 +356,7 @@ export function Game({userName}) {
           const response = await fetch('/api/game/guessWord', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({ roomCode, guessedWord: userGuess })
+              body: JSON.stringify({ roomCode, guessedWord: userGuess, username: userName })
           });
 
           if (!response.ok) {
@@ -360,6 +365,10 @@ export function Game({userName}) {
 
           const data = await response.json();
           console.log("Guess submitted:", data);
+
+          setGameState(data);
+          setBlueTeam(data.blueTeam);
+          setGreenTeam(data.greenTeam);
 
       } catch (error) {
           console.error("Error submitting guess:", error);
@@ -386,9 +395,9 @@ export function Game({userName}) {
         const data = await response.json();
   
         if (data) {
-          setBlueTeam(data.blueTeam);
-          setGreenTeam(data.greenTeam);
           setGameState(data);
+          setBlueTeam(data.blueTeam || {}); 
+          setGreenTeam(data.greenTeam || {});
           setTimer(data.timer);
           //will need to change below once websocket is working, description response is getting reset after each round and with how I'm showing the UI changes right now it doesn't persist against gameState changes. Basically it vanishes
           if (data.describerResponse && data.describerResponse !== "") {
@@ -448,13 +457,13 @@ export function Game({userName}) {
               </tr>
             </thead>
             <tbody>
-              {blueTeam.length > 0 && (
+              {blueTeam && Object.keys(blueTeam).length > 0 && (
                 <>
-                  {blueTeam.map((player, index) => (
+                  {Object.entries(blueTeam).map(([username, player], index) => (
                     <tr key={index} className={player.turn === "Describer" ? "highlight" : ""}>
-                      <td>{player.username}</td>
-                      <td>{player.turn}</td>
-                      <td>{player.guessedWord}</td>
+                      <td>{username}</td>
+                      <td>{player.turn || ""}</td>
+                      <td>{player.guessedWord || ""}</td>
                     </tr>
                   ))}
                 </>
@@ -541,20 +550,19 @@ export function Game({userName}) {
               </tr>
             </thead>
             <tbody>
-              {greenTeam.length > 0 && (
-                <>
-                  {greenTeam.map((player, index) => (
-                    <tr key={index} className={player.turn === "Describer" ? "highlight" : ""}>
-                      <td>{player.username}</td>
-                      <td>{player.turn}</td>
-                      <td>{player.guessedWord}</td>
-                    </tr>
-                  ))}
-                </>
-              )}
-            </tbody>
-          </table>
-                  
+                {greenTeam && Object.keys(greenTeam).length > 0 && (
+                  <>
+                    {Object.entries(greenTeam).map(([username, player], index) => (
+                      <tr key={index} className={player.turn === "Describer" ? "highlight" : ""}>
+                        <td>{username}</td>
+                        <td>{player.turn || ""}</td>
+                        <td>{player.guessedWord || ""}</td>
+                      </tr>
+                    ))}
+                  </>
+                )}
+              </tbody>
+          </table>     
         </section>
       </div>
     </div>
