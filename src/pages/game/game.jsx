@@ -478,19 +478,21 @@ export function Game({userName}) {
         </div>
           <h2>Room Code: {roomCode} </h2>
           <form onSubmit={joinRoom} className="w-75 pb-1">
+          <div className="d-flex align-items-center">
             <label htmlFor="room-code"></label>
             <input
               type="text"
               id="room-code"
-              className="form-control mb-2"
+              className="form-control me-2"
               placeholder="Enter Room Code"
               value={roomCode}
               onChange={(e) => setRoomCode(e.target.value)}
-            />
-            <button type="submit" className="btn btn-outline-secondary w100">Join Room</button>
+            /> 
+            <button type="submit" className="btn btn-outline-secondary h-50 py-0">Join Room</button>
+            </div>
           </form>
           <div>
-          <button className="btn btn-primary w100" onClick={setTeams }>Set Teams!</button>
+          <button className="btn btn-primary w100 me-2 " onClick={setTeams }>Set Teams!</button>
           <button className="btn btn-success w100" onClick={playGame }>Play Game!</button>
           </div>
           <form action="#" method="post" className="w-50 mt-2">
