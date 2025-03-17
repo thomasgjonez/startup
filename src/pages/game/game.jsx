@@ -101,51 +101,54 @@ export function Game({userName}) {
   // }, [timer]);
 
 // will need to adjsut this later on when we have service/database stuff
-  const generateRandomUsers = (num) => {
-    const randomUsers = [];
-    for (let i = 1; i <= num; i++) {
-      randomUsers.push({
-        username: `Player_${Math.floor(Math.random() * 1000)}`,
-        turn: "",
-        guessedWord: "" 
-      });
-    }
+//   const generateRandomUsers = (num) => {
+//     const randomUsers = [];
+//     for (let i = 1; i <= num; i++) {
+//       randomUsers.push({
+//         username: `Player_${Math.floor(Math.random() * 1000)}`,
+//         turn: "",
+//         guessedWord: "" 
+//       });
+//     }
 
-    return randomUsers;
-  };
-// getRandomWord andn getRandomDescription are for demo purposes, will change in future and are place holders for future APIs
-  const getRandomWord = () => {
-    const words = ["apple"];
-    return words[Math.floor(Math.random() * words.length)];
-  };
+//     return randomUsers;
+//   };
+// // getRandomWord andn getRandomDescription are for demo purposes, will change in future and are place holders for future APIs
+//   const getRandomWord = () => {
+//     const words = ["apple"];
+//     return words[Math.floor(Math.random() * words.length)];
+//   };
 
-  const getRandomDescription = () => {
-    const descriptions = ["Its a red fruit", "Its red and you can eat it", "A red fruit that is sweet in crispy", "fruit that comes in three colors of red, gold, and green", "fruit that comes from a tree", " a _____ a day keeps the doctor away"];
-    return descriptions[Math.floor(Math.random() * descriptions.length)];
-  }
+//   const getRandomDescription = () => {
+//     const descriptions = ["Its a red fruit", "Its red and you can eat it", "A red fruit that is sweet in crispy", "fruit that comes in three colors of red, gold, and green", "fruit that comes from a tree", " a _____ a day keeps the doctor away"];
+//     return descriptions[Math.floor(Math.random() * descriptions.length)];
+//   }
 
-  const pickDescriber = () => {
-    if (!blueTeam.length || !greenTeam.length) {
-      console.warn("Cannot pick describer: Teams are empty.");
-      return;
-    }
+//   const pickDescriber = () => {
+//     if (!blueTeam.length || !greenTeam.length) {
+//       console.warn("Cannot pick describer: Teams are empty.");
+//       return;
+//     }
 
-    let describer;
-    let response;
+//     let describer;
+//     let response;
   
-    if (teamTurn === "blue") {
-      describer = blueTeam[blueDescriberIndex % blueTeam.length];
-      setBlueDescriberIndex((prev) => (prev + 1) % blueTeam.length); 
-    } else {
-      describer = greenTeam[greenDescriberIndex % greenTeam.length];
-      setGreenDescriberIndex((prev) => (prev + 1) % greenTeam.length);
-    }
-    response = getRandomDescription();
-    setCurrentDescriber(describer);
-    setDescriberResponse(response);
+//     if (teamTurn === "blue") {
+//       describer = blueTeam[blueDescriberIndex % blueTeam.length];
+//       setBlueDescriberIndex((prev) => (prev + 1) % blueTeam.length); 
+//     } else {
+//       describer = greenTeam[greenDescriberIndex % greenTeam.length];
+//       setGreenDescriberIndex((prev) => (prev + 1) % greenTeam.length);
+//     }
+//     response = getRandomDescription();
+//     setCurrentDescriber(describer);
+//     setDescriberResponse(response);
 
     
-  };
+//   };
+
+//This section is for UI changes for highlighting when someone is the current describer
+// and having the enter a description for the word(works right now could )
   useEffect(() => {
     if (!currentDescriber) return;
   
@@ -173,7 +176,7 @@ export function Game({userName}) {
   
   useEffect(() => {
     if (isUserDescriber) {
-      const userDescription = prompt("It's your turn to describe! Enter your description:");
+      const userDescription = prompt("It's your turn to describe the word! Enter your description:");
       if (userDescription) {
         setDescriberResponse(userDescription);
       }
@@ -181,38 +184,38 @@ export function Game({userName}) {
   }, [isUserDescriber]);
   
 
-  const initializeTeams = () => {
-    const blue = generateRandomUsers(3);
-    const green = generateRandomUsers(3);
-    blue.push({
-      username: userName,
-      turn: "",
-      guessedWord: guessedWord 
-    })
-    setBlueTeam(blue);
-    setGreenTeam(green);
-    setTeamsInitialized(true);
+  // const initializeTeams = () => {
+  //   const blue = generateRandomUsers(3);
+  //   const green = generateRandomUsers(3);
+  //   blue.push({
+  //     username: userName,
+  //     turn: "",
+  //     guessedWord: guessedWord 
+  //   })
+  //   setBlueTeam(blue);
+  //   setGreenTeam(green);
+  //   setTeamsInitialized(true);
 
-    localStorage.setItem("blueTeam", JSON.stringify(blue));
-    localStorage.setItem("greenTeam", JSON.stringify(green));
-  };
+  //   localStorage.setItem("blueTeam", JSON.stringify(blue));
+  //   localStorage.setItem("greenTeam", JSON.stringify(green));
+  // };
 
-  const initializeGame = () => {
-    setBlueTeamPts(0);
-    setGreenTeamPts(0);
-    setTimeout(() => {
-      pickDescriber();
-      startRound();
-    }, 100);
+  // const initializeGame = () => {
+  //   setBlueTeamPts(0);
+  //   setGreenTeamPts(0);
+  //   setTimeout(() => {
+  //     pickDescriber();
+  //     startRound();
+  //   }, 100);
     
-  }
+  // }
 
-  const startRound = () => {
-    if (winCondition) return;
-    setTimer(10); // Reset timer
-    setRandomWord(getRandomWord());
+  // const startRound = () => {
+  //   if (winCondition) return;
+  //   setTimer(10); // Reset timer
+  //   setRandomWord(getRandomWord());
 
-  }
+  // }
 
   // useEffect(() => {
   //   if (guessedWord === randomWord && randomWord !== "") {
@@ -375,6 +378,11 @@ export function Game({userName}) {
           method: 'GET',
           headers: { 'Content-Type': 'application/json' }
         });
+
+        if (!response.ok) {
+          throw new Error(`Server error: ${response.status}`);
+        }
+
         const data = await response.json();
   
         if (data) {
@@ -382,7 +390,10 @@ export function Game({userName}) {
           setGreenTeam(data.greenTeam);
           setGameState(data);
           setTimer(data.timer);
-          setDescriberResponse(data.describerResponse);
+          //will need to change below once websocket is working, description response is getting reset after each round and with how I'm showing the UI changes right now it doesn't persist against gameState changes. Basically it vanishes
+          if (data.describerResponse && data.describerResponse !== "") {
+            setDescriberResponse(data.describerResponse);
+          }
           setCurrentDescriber(data.currentDescriber);
           setBlueTeamPts(data.blueTeamPts);
           setGreenTeamPts(data.greenTeamPts);
@@ -491,7 +502,11 @@ export function Game({userName}) {
               className="form-control mb-2 py-3"
               rows="4"
               readOnly
-              value={currentDescriber ? `${currentDescriber.username} is describing: ${describerResponse}` : "Waiting for describer..."}
+              value={
+                currentDescriber && currentDescriber.username
+                  ? `${currentDescriber.username} is describing: ${describerResponse}`
+                  : "Waiting for describer..."
+              }
           />
           </form>
 

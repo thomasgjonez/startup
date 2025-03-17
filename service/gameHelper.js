@@ -6,6 +6,7 @@ function runGame(gameState){
     function roundLoop() {
         if (gameState.winCondition) {
           console.log("Game ended.");
+          hardReset(gameState);
           return;
         }
         if (gameState.timer > 0) {
@@ -55,6 +56,10 @@ function compareWords(gameState, guessedWord){
 }
 
 function pickDescriber(gameState) {
+    if (!gameState.blueTeam.length || !gameState.greenTeam.length) {
+      console.warn("Teams are empty! Cannot pick describer.");
+      return;
+    }
     let describer;
   
     if (gameState.teamTurn === "blue") {
@@ -63,6 +68,9 @@ function pickDescriber(gameState) {
     } else {
       describer = gameState.greenTeam[gameState.greenDescriberIndex % gameState.greenTeam.length];
       gameState.greenDescriberIndex = (gameState.greenDescriberIndex + 1) % gameState.greenTeam.length;
+    }
+    if (!describer) {
+      console.warn("No describer found! Check team data.");
     }
   
     gameState.currentDescriber = describer;
@@ -76,7 +84,7 @@ function getRandomWord() {
     const words = ["apple"];
     return words[Math.floor(Math.random() * words.length)];
 }
-
+//soft reset which allows you to restart the game witihout resetting teams or roomCode
 function resetGame(gameState){
   gameState.blueDescriberIndex = 0;
   gameState.greenDescriberIndex = 0;
@@ -89,9 +97,33 @@ function resetGame(gameState){
   gameState.teamTurn = 'blue';
   gameState.winCondition = false;
 }
+//this function basically resets every field including roomCode
+function hardReset(gameState){
+  setTimeout(() => {
+    if (gameState) {
+      gameState.roomCode = "";
+      gameState.players = [];
+      gameState.blueTeam = [];
+      gameState.greenTeam = [];
+      gameState.blueTeamPts = 0;
+      gameState.greenTeamPts = 0;
+      gameState.timer = 0;
+      gameState.randomWord = "";
+      gameState.currentDescriber = null;
+      gameState.teamTurn = "blue";
+      gameState.blueDescriberIndex = 0;
+      gameState.greenDescriberIndex = 0;
+      gameState.describerResponse = "";
+      gameState.winCondition = false;
+
+      console.log("Game state has been reset.");
+    }
+  }, 30000); 
+
+}
 
 
-//Endpoint makes this obsolete, but keep it just in case
+//Endpoint makes this obsolete, but keep it for testing purposes
 // function getRandomDescription() {
 //     const descriptions = [
 //       "It's a red fruit",
