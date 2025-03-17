@@ -179,7 +179,8 @@ export function Game({userName}) {
   
   useEffect(() => {
     if (isUserDescriber) {
-      const userDescription = prompt("It's your turn to describe the word! Enter your description:");
+      const userDescription = prompt(`It's your turn to describe the word "${randomWord}"! Enter your description:`);
+
       if (userDescription) {
         setDescriberResponse(userDescription);
       }
@@ -403,6 +404,7 @@ export function Game({userName}) {
           if (data.describerResponse && data.describerResponse !== "") {
             setDescriberResponse(data.describerResponse);
           }
+          setRandomWord(data.randomWord);
           setCurrentDescriber(data.currentDescriber);
           setBlueTeamPts(data.blueTeamPts);
           setGreenTeamPts(data.greenTeamPts);
