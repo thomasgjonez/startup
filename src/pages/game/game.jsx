@@ -416,7 +416,7 @@ export function Game({userName}) {
     };
   
     // Poll game state every second
-    const interval = setInterval(fetchGameState, 5000);
+    const interval = setInterval(fetchGameState, 3000);
   
     return () => clearInterval(interval); // Cleanup on unmount
   }, [roomCode]);
