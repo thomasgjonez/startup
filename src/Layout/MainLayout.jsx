@@ -7,27 +7,44 @@ import "./main.css"
 export default function MainLayout({ userName }) {
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState("");
-  const username = userName;
   const chatBoxRef = useRef(null);
 
-  const addMessage = () => {
-    if (inputMessage.trim() !== "") {
-      setMessages((prev) => [...prev, { username, text: inputMessage }]);
-      setInputMessage("");
-      //Mock messages
-      setTimeout(() => {
-      setMessages((prev) => [...prev, { username: "Johnsmith_15", text: "what a cool insight" }]);
-      }, 2000 )
-      setTimeout(() => {
-      setMessages((prev) => [...prev, { username: "Johnsmith_1", text: "I love CatchPhrase" }]);
-      }, 4000 )
+const addMessage = async () => {
+    try {
+      const response = await fetch('/api/main/addMessage', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: userName, message: inputMessage }),
+      });
+      console.log(userName);
+      console.log(inputMessage);
+  
+      if (!response.ok) throw new Error('Failed to send message');
+  
+      setInputMessage(""); // Clear input field after sending
+    } catch (error) {
+      console.error('Error sending message:', error);
     }
   };
-  // setInterval(() => {
-  //   // This will be replaced with WebSocket messages
-  //   const userName = `User-${Math.floor(Math.random() * 100)}`;
-  //   setMessages((prev) => [...prev, { username: userName, text: "Hi!" }]);;
-  // }, 5000);
+
+useEffect(() => {
+  const fetchMessages = async () => {
+    try {
+      const response = await fetch('/api/main/getMessage');
+      if (!response.ok) throw new Error('Failed to fetch messages');
+      
+      const data = await response.json();
+      setMessages(prevMessages => [...prevMessages, ...data]); 
+      await fetch('/api/main/clearChat', {method: 'DELETE'}); //clears chat array so that messages aren't printing over and over again
+      } catch (error) {
+      console.error('Error fetching messages:', error);
+    }
+  };
+
+  const interval = setInterval(fetchMessages, 5000);
+  return () => clearInterval(interval);
+}, []);
+
 
   useEffect(() => {
     if (chatBoxRef.current) {
@@ -60,7 +77,7 @@ export default function MainLayout({ userName }) {
         <h2>Live Chat</h2>
         <div ref={chatBoxRef} className="chatBox border rounded p-3 bg-white shadow-sm w-50 mx-auto "style={{ maxHeight: "100px", overflowY: "auto" }}>
           {messages.map((msg, index) => (
-            <p key={index}><strong>{msg.username}: </strong> {msg.text}</p>
+            <p key={index}><strong>{msg.username}: </strong> {msg.message}</p>
           ))}
 
         </div>
@@ -72,6 +89,7 @@ export default function MainLayout({ userName }) {
           placeholder="Type a message"
           value={inputMessage}
           onChange={(e) => setInputMessage(e.target.value)}
+          //onKeyDown={(e) => e.key === "Enter" && addMessage()}
           />
           <button id="sendMessageButton" className="btn btn-primary mt-2" onClick={addMessage}>Send</button>
         </div>

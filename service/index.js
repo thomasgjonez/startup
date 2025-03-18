@@ -11,6 +11,7 @@ const authCookieName = 'token';
 // The games and users are saved in memory and disappear whenever the service is restarted.
 const users = [];
 const games = {};
+const chatMessages = [];
 
 // The service port. In production the front-end code is statically hosted by the service on the same port.
 const port = process.argv.length > 2 ? process.argv[2] : 3000;
@@ -233,6 +234,33 @@ apiRouter.get('/game/state', (req, res) => {
 })
 
 //Live Chat section
+apiRouter.post('/main/addMessage', (req, res) => {
+  console.log('add message endpoint hit')
+  const {username, message} = req.body;
+  if (!message){
+    console.log('no message')
+    return res.status(400).send({msg: 'No chat message'})
+  }
+  if (!username){
+    console.log('no username')
+  }
+  chatMessages.push({username, message});
+
+  return res.status(200).send({ msg: 'Message added successfully' });
+})
+//
+apiRouter.get('/main/getMessage', (req, res) => {
+  if(!chatMessages || chatMessages.length === 0){
+    return res.status(200).json([]);
+  }
+  res.status(200).json(chatMessages);
+})
+
+apiRouter.delete('/main/clearChat', (req, res) => {
+  chatMessages.length = 0;
+  return res.status(200).json({ msg: "Chat cleared successfully" });;
+})
+
 //post
 
 // Default error handler
