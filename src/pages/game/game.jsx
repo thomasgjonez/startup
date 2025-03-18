@@ -7,17 +7,11 @@ export function Game({userName}) {
   const [roomCode, setRoomCode] = useState("");
   const [timer, setTimer] = useState();
   const [userGuess, setUserGuess] = useState("");
-  const [guessedWord, setGuessedWord] = useState("");
   const [blueTeam, setBlueTeam] = useState({});
   const [blueTeamPts, setBlueTeamPts] = useState(0);
   const [greenTeamPts, setGreenTeamPts] = useState(0);
   const [greenTeam, setGreenTeam] = useState({});
-  const [teamsInitialized, setTeamsInitialized] = useState(false);
-  const [teamTurn, setTeamTurn] = useState("blue");
   const [randomWord, setRandomWord] = useState("");
-  const [winCondition, setWinCondition] = useState(false);
-  const [blueDescriberIndex, setBlueDescriberIndex] = useState(0);
-  const [greenDescriberIndex, setGreenDescriberIndex] = useState(0);
   const [currentDescriber, setCurrentDescriber] = useState(null);
   const [describerResponse, setDescriberResponse] = useState("");
   const [isUserDescriber, setIsUserDescriber] = useState(false);
@@ -40,250 +34,10 @@ export function Game({userName}) {
     { left: "500px", top: "10px" },  // Position for score 6
   ];
 
-  // useEffect(() => {
-  //   const storedCode = localStorage.getItem("roomCode");
-  //   if (storedCode) {
-  //     setRoomCode(storedCode);
-  //   }
-  // }, []);
-
-  // const handleRoomChange = (event) => {
-  //   setRoomCode(event.target.value);
-  // };
-  // const handleGuess = () => {
-  //   setBlueTeam((prevBlueTeam) =>
-  //     prevBlueTeam.map((player) =>
-  //       player.username === userName
-  //         ? { ...player, guessedWord: userGuess }
-  //         : player
-  //     )
-  //   );
-  
-  //   setGreenTeam((prevGreenTeam) =>
-  //     prevGreenTeam.map((player) =>
-  //       player.username === userName
-  //         ? { ...player, guessedWord: userGuess }
-  //         : player
-  //     )
-  //   );
-
-  //   setGuessedWord(userGuess);
-  //   setUserGuess("");
-
-  //   localStorage.setItem("blueTeam", JSON.stringify(blueTeam));
-  //   localStorage.setItem("greenTeam", JSON.stringify(greenTeam));
-  // };
-
-  // Handle Enter key press
-  // const handleKeyPress = (event) => {
-  //   if (event.key === "Enter") {
-  //     event.preventDefault();
-  //     localStorage.setItem("roomCode", roomCode);
-  //     alert("Room code saved!");
-  //   }
-  // }
-  // const handleKeyPressforWord = (event) => {
-  //   if (event.key === "Enter") {
-  //     event.preventDefault();
-  //     handleGuess();
-  //   }
-  // }
-
-  // useEffect(() => {
-  //   if (timer > 0) {
-  //     const countdown = setInterval(() => {
-  //       setTimer((prevTime) => prevTime - 1);
-  //     }, 1000);
-  //     return () => clearInterval(countdown);
-  //   } else if (timer === 0) {
-  //     endRound();
-  //   }
-  // }, [timer]);
-
-// will need to adjsut this later on when we have service/database stuff
-//   const generateRandomUsers = (num) => {
-//     const randomUsers = [];
-//     for (let i = 1; i <= num; i++) {
-//       randomUsers.push({
-//         username: `Player_${Math.floor(Math.random() * 1000)}`,
-//         turn: "",
-//         guessedWord: "" 
-//       });
-//     }
-
-//     return randomUsers;
-//   };
-// // getRandomWord andn getRandomDescription are for demo purposes, will change in future and are place holders for future APIs
-//   const getRandomWord = () => {
-//     const words = ["apple"];
-//     return words[Math.floor(Math.random() * words.length)];
-//   };
-
-//   const getRandomDescription = () => {
-//     const descriptions = ["Its a red fruit", "Its red and you can eat it", "A red fruit that is sweet in crispy", "fruit that comes in three colors of red, gold, and green", "fruit that comes from a tree", " a _____ a day keeps the doctor away"];
-//     return descriptions[Math.floor(Math.random() * descriptions.length)];
-//   }
-
-//   const pickDescriber = () => {
-//     if (!blueTeam.length || !greenTeam.length) {
-//       console.warn("Cannot pick describer: Teams are empty.");
-//       return;
-//     }
-
-//     let describer;
-//     let response;
-  
-//     if (teamTurn === "blue") {
-//       describer = blueTeam[blueDescriberIndex % blueTeam.length];
-//       setBlueDescriberIndex((prev) => (prev + 1) % blueTeam.length); 
-//     } else {
-//       describer = greenTeam[greenDescriberIndex % greenTeam.length];
-//       setGreenDescriberIndex((prev) => (prev + 1) % greenTeam.length);
-//     }
-//     response = getRandomDescription();
-//     setCurrentDescriber(describer);
-//     setDescriberResponse(response);
-
-    
-//   };
-
-//This section is for UI changes for highlighting when someone is the current describer
-// and having the enter a description for the word(works right now could )
-  useEffect(() => {
-    if (!currentDescriber) return;
-  
-    setBlueTeam((prevBlueTeam) => {
-      const updatedBlueTeam = Object.entries(prevBlueTeam).reduce((acc, [username, player]) => {
-        acc[username] = {
-          ...player,
-          turn: username === currentDescriber.username ? "Describer" : "",
-        };
-        return acc;
-      }, {});
-      return updatedBlueTeam;
-    });
-  
-    setGreenTeam((prevGreenTeam) => {
-      const updatedGreenTeam = Object.entries(prevGreenTeam).reduce((acc, [username, player]) => {
-        acc[username] = {
-          ...player,
-          turn: username === currentDescriber.username ? "Describer" : "",
-        };
-        return acc;
-      }, {});
-      return updatedGreenTeam;
-    });
-
-    setIsUserDescriber(currentDescriber.username === userName);
-  }, [currentDescriber]);
-  
-  useEffect(() => {
-    if (isUserDescriber) {
-      const userDescription = prompt(`It's your turn to describe the word "${randomWord}"! Enter your description:`);
-
-      if (userDescription) {
-        setDescriberResponse(userDescription);
-      }
-    }
-  }, [isUserDescriber]);
-  
-
-  // const initializeTeams = () => {
-  //   const blue = generateRandomUsers(3);
-  //   const green = generateRandomUsers(3);
-  //   blue.push({
-  //     username: userName,
-  //     turn: "",
-  //     guessedWord: guessedWord 
-  //   })
-  //   setBlueTeam(blue);
-  //   setGreenTeam(green);
-  //   setTeamsInitialized(true);
-
-  //   localStorage.setItem("blueTeam", JSON.stringify(blue));
-  //   localStorage.setItem("greenTeam", JSON.stringify(green));
-  // };
-
-  // const initializeGame = () => {
-  //   setBlueTeamPts(0);
-  //   setGreenTeamPts(0);
-  //   setTimeout(() => {
-  //     pickDescriber();
-  //     startRound();
-  //   }, 100);
-    
-  // }
-
-  // const startRound = () => {
-  //   if (winCondition) return;
-  //   setTimer(10); // Reset timer
-  //   setRandomWord(getRandomWord());
-
-  // }
-
-  // useEffect(() => {
-  //   if (guessedWord === randomWord && randomWord !== "") {
-  //     alert("Team switch");
-  //     setTeamTurn((prev) => (prev === "blue" ? "green" : "blue")); 
-  //     setRandomWord(getRandomWord());
-  //     setGuessedWord("");
-  //   }
-  // }, [guessedWord, randomWord]);
-
-  // useEffect(() => {
-  //   if (!currentDescriber) return;
-  
-  //   setBlueTeam((prevBlueTeam) =>
-  //     prevBlueTeam.map((player) => ({
-  //       ...player,
-  //       turn: player.username === currentDescriber.username ? "Describer" : "",
-  //     }))
-  //   );
-  
-  //   setGreenTeam((prevGreenTeam) =>
-  //     prevGreenTeam.map((player) => ({
-  //       ...player,
-  //       turn: player.username === currentDescriber.username ? "Describer" : "",
-  //     }))
-  //   );
-  // }, [currentDescriber]);
-
-  // useEffect(() => {
-  //   if (teamsInitialized) {
-  //     pickDescriber();
-  //   }
-  // }, [teamTurn]);
-  
-
-  // const endRound = () => {
-  //   if (teamTurn === "blue") {
-  //     setGreenTeamPts((prev) => prev + 1);
-  //   } else {
-  //     setBlueTeamPts((prev) => prev + 1);
-  //   }
-
-
-  //   // Check for win condition
-  //   if (blueTeamPts === 5 || greenTeamPts === 5) {
-  //     setWinCondition(true);
-  //     alert(`${blueTeamPts === 5 ? "Blue Team" : "Green Team"} Wins!`);
-  //   } else {
-  //     startRound();
-  //   }
-  // };
-
-  const getBluePiecePosition = (score) => {
-    return predefinedBluePositions[score];
-  };
-
-  const getGreenPiecePosition = (score) => {
-    return predefinedGreenPositions[score];
-  };
-
   //New Section for updated game frontend code with endpoint calls
 
   const joinRoom = async (e) => {
-    e.preventDefault();  // Prevents page refresh/navigation
+    e.preventDefault();
     try {
       const response = await fetch('/api/game/createOrJoinRoom', {
         method: 'POST',
@@ -307,15 +61,15 @@ export function Game({userName}) {
       const response = await fetch('/api/game/setTeams', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ roomCode })  // Sending the current room code
+        body: JSON.stringify({ roomCode })
       });
   
       if (!response.ok) {
         throw new Error(`Server error: ${response.status}`);
       }
   
-      const data = await response.json(); // Parse response JSON
-      setGameState(data.gameState); // Update game state with the new teams
+      const data = await response.json();
+      setGameState(data.gameState); 
   
       console.log("Teams set successfully:", data.gameState);
     } catch (error) {
@@ -335,7 +89,7 @@ export function Game({userName}) {
         throw new Error(`Server error: ${response.status}`);
       }
   
-      const data = await response.json(); // Parse the JSON response
+      const data = await response.json();
       console.log("Game started successfully:", data);
 
     } catch (error) {
@@ -375,10 +129,58 @@ export function Game({userName}) {
           console.error("Error submitting guess:", error);
       }
 
-      // Reset input field after submitting
       setUserGuess("");
   }
   }
+
+  //This section is for UI changes for highlighting when someone is the current describer
+// and having the enter a description for the word(works right now could )
+useEffect(() => {
+  if (!currentDescriber) return;
+
+  setBlueTeam((prevBlueTeam) => {
+    const updatedBlueTeam = Object.entries(prevBlueTeam).reduce((acc, [username, player]) => {
+      acc[username] = {
+        ...player,
+        turn: username === currentDescriber.username ? "Describer" : "",
+      };
+      return acc;
+    }, {});
+    return updatedBlueTeam;
+  });
+
+  setGreenTeam((prevGreenTeam) => {
+    const updatedGreenTeam = Object.entries(prevGreenTeam).reduce((acc, [username, player]) => {
+      acc[username] = {
+        ...player,
+        turn: username === currentDescriber.username ? "Describer" : "",
+      };
+      return acc;
+    }, {});
+    return updatedGreenTeam;
+  });
+
+  setIsUserDescriber(currentDescriber.username === userName);
+}, [currentDescriber]);
+
+useEffect(() => {
+  if (isUserDescriber) {
+    const userDescription = prompt(`It's your turn to describe the word "${randomWord}"! Enter your description:`);
+
+    if (userDescription) {
+      setDescriberResponse(userDescription);
+    }
+  }
+}, [isUserDescriber]);
+
+
+const getBluePiecePosition = (score) => {
+  return predefinedBluePositions[score];
+};
+
+const getGreenPiecePosition = (score) => {
+  return predefinedGreenPositions[score];
+};
 
 
   useEffect(() => {
@@ -400,7 +202,6 @@ export function Game({userName}) {
           setBlueTeam(data.blueTeam || {}); 
           setGreenTeam(data.greenTeam || {});
           setTimer(data.timer);
-          //will need to change below once websocket is working, description response is getting reset after each round and with how I'm showing the UI changes right now it doesn't persist against gameState changes. Basically it vanishes
           if (data.describerResponse && data.describerResponse !== "") {
             setDescriberResponse(data.describerResponse);
           }
@@ -420,8 +221,6 @@ export function Game({userName}) {
   
     return () => clearInterval(interval); // Cleanup on unmount
   }, [roomCode]);
-  
-  
 
 
   useEffect(() => {
@@ -443,7 +242,7 @@ export function Game({userName}) {
     }
   }, [greenTeamPts]);
 
-
+//compoenent section
   return (
     <div className="container-fluid flex-grow-1">
       <div className="row h-100">
