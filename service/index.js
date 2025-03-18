@@ -235,7 +235,6 @@ apiRouter.get('/game/state', (req, res) => {
 
 //Live Chat section
 apiRouter.post('/main/addMessage', (req, res) => {
-  console.log('add message endpoint hit')
   const {username, message} = req.body;
   if (!message){
     console.log('no message')
@@ -256,12 +255,10 @@ apiRouter.get('/main/getMessage', (req, res) => {
   res.status(200).json(chatMessages);
 })
 
-apiRouter.delete('/main/clearChat', (req, res) => {
-  chatMessages.length = 0;
-  return res.status(200).json({ msg: "Chat cleared successfully" });;
-})
-
-//post
+// apiRouter.delete('/main/clearChat', (req, res) => {
+//   chatMessages.length = 0;
+//   return res.status(200).json({ msg: "Chat cleared successfully" });;
+// })
 
 // Default error handler
 app.use(function (err, req, res, next) {
@@ -269,7 +266,7 @@ app.use(function (err, req, res, next) {
   });
 
 
-//Helper functions for login will go here
+//Helper functions for login and chat will go here
 async function createUser(username, email, password) {
     const passwordHash = await bcrypt.hash(password, 10);
   
@@ -298,6 +295,15 @@ function setAuthCookie(res, authToken) {
       sameSite: 'strict',
     });
 }
+
+function clearChat() {
+  chatMessages.length = 0; // Empty the chat array
+  console.log("Chat cleared for all users.");
+}
+
+setInterval(() => {
+  clearChat();
+}, 30000);
 
 app.listen(port, () => {
   console.log(`Listening on port ${port}`);

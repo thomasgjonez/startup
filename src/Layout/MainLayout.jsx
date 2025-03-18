@@ -35,7 +35,8 @@ useEffect(() => {
       
       const data = await response.json();
       setMessages(prevMessages => [...prevMessages, ...data]); 
-      await fetch('/api/main/clearChat', {method: 'DELETE'}); //clears chat array so that messages aren't printing over and over again
+      //I have a server function that will clear the chat so its in sync for everyone
+      //await fetch('/api/main/clearChat', {method: 'DELETE'}); //clears chat array so that messages aren't printing over and over again
       } catch (error) {
       console.error('Error fetching messages:', error);
     }
@@ -89,7 +90,7 @@ useEffect(() => {
           placeholder="Type a message"
           value={inputMessage}
           onChange={(e) => setInputMessage(e.target.value)}
-          //onKeyDown={(e) => e.key === "Enter" && addMessage()}
+          onKeyDown={(e) => e.key === "Enter" && addMessage()}
           />
           <button id="sendMessageButton" className="btn btn-primary mt-2" onClick={addMessage}>Send</button>
         </div>
