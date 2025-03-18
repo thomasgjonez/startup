@@ -135,7 +135,8 @@ export function Game({userName}) {
 
   //This section is for UI changes for highlighting when someone is the current describer
 // and having the enter a description for the word(works right now could )
-useEffect(() => {
+
+useEffect(() => { //this changes the tables to reflect the actual gameState
   if (!currentDescriber) return;
 
   setBlueTeam((prevBlueTeam) => {
@@ -163,7 +164,7 @@ useEffect(() => {
   setIsUserDescriber(currentDescriber.username === userName);
 }, [currentDescriber]);
 
-useEffect(() => {
+useEffect(() => {     //prompts the user to write a response
   if (isUserDescriber) {
     const userDescription = prompt(`It's your turn to describe the word "${randomWord}"! Enter your description:`);
 
@@ -183,7 +184,7 @@ const getGreenPiecePosition = (score) => {
 };
 
 
-  useEffect(() => {
+  useEffect(() => { //updates local variables with actual results
     const fetchGameState = async () => {
       try {
         const response = await fetch(`/api/game/state?roomCode=${roomCode}`, {
@@ -216,10 +217,9 @@ const getGreenPiecePosition = (score) => {
       }
     };
   
-    // Poll game state every second
     const interval = setInterval(fetchGameState, 3000);
   
-    return () => clearInterval(interval); // Cleanup on unmount
+    return () => clearInterval(interval);
   }, [roomCode]);
 
 

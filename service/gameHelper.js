@@ -1,8 +1,7 @@
-const axios = require('axios');
+const ninjaAPIKey = 'gdUXgBuLnhEv/my9sMG25A==bJmFMklsLvLluQa2'
 
 //section of running the game/rounds
 function runGame(gameState){
-    console.log("roundLoop will be called");//testing purposes, delete later;
     function roundLoop() {
         if (gameState.winCondition) {
           console.log("Game ended.");
@@ -11,7 +10,6 @@ function runGame(gameState){
         }
         if (gameState.timer > 0) {
           setTimeout(() => {
-            //increments timer to run out every 1 second
             gameState.timer--;
             roundLoop();
           }, 1000);
@@ -25,8 +23,8 @@ function runGame(gameState){
 
 async function startRound(gameState){
     if (gameState.winCondition) return;
-        gameState.timer = 10; //5 second runs for testing, I'll change in the future
-        gameState.randomWord = getRandomWord();
+        gameState.timer = 10; //10 second runs for testing, I'll change in the future
+        gameState.randomWord = await getRandomWord();
         console.log(`Round started. New word: ${gameState.randomWord}`);
 }
 
@@ -52,7 +50,6 @@ function compareWords(gameState, guessedWord){
         gameState.randomWord = getRandomWord();
         pickDescriber(gameState);
     } 
-    //else do nothing, could add extra stuff here
 }
 
 function pickDescriber(gameState) {
@@ -79,10 +76,26 @@ function pickDescriber(gameState) {
 
 //section for helper functions
 
-function getRandomWord() {
-    // waiting on API from wordnik
-    const words = ["apple"];
-    return words[Math.floor(Math.random() * words.length)];
+async function getRandomWord() {
+  try {
+      const response = await fetch('https://api.api-ninjas.com/v1/randomword', {
+          method: 'GET',
+          headers: { 'X-Api-Key': ninjaAPIKey }
+      });
+
+      if (!response.ok) throw new Error('Failed to fetch word');
+
+      const data = await response.json();
+      console.log('Random Word:', data.word);
+
+      const word = Adata.word[0];
+      
+      console.log('Random Word:', word);
+      return word;
+  } catch (error) {
+      console.error('Error fetching word:', error);
+      return null;
+  }
 }
 //soft reset which allows you to restart the game witihout resetting teams or roomCode
 function resetGame(gameState){
@@ -122,21 +135,8 @@ function hardReset(gameState){
 
 }
 
-
-//Endpoint makes this obsolete, but keep it for testing purposes
-// function getRandomDescription() {
-//     const descriptions = [
-//       "It's a red fruit",
-//       "It's red and you can eat it",
-//       "A red fruit that's sweet and crispy",
-//       "Fruit that comes in three colors: red, gold, and green",
-//       "Fruit that comes from a tree",
-//       "A _____ a day keeps the doctor away"
-//     ];
-//     return descriptions[Math.floor(Math.random() * descriptions.length)];
-//   }
-
   module.exports = {
+    getRandomWord,
     compareWords,
     pickDescriber,
     getRandomWord,
