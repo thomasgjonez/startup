@@ -142,11 +142,13 @@ For this deliverable I did the following. I checked the box `[x]` and added a de
 
 For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
 
-- [ ] **Node.js/Express HTTP service** - I did not complete this part of the deliverable.
-- [ ] **Static middleware for frontend** - I did not complete this part of the deliverable.
-- [ ] **Calls to third party endpoints** - I did not complete this part of the deliverable.
-- [ ] **Backend service endpoints** - I did not complete this part of the deliverable.
-- [ ] **Frontend calls service endpoints** - I did not complete this part of the deliverable.
+- [X] **Node.js/Express HTTP service** - I completed this part and have a functioning server, which is lauched through node.js
+- [X] **Static middleware for frontend** - The main middleware I implemented for this phase was requireAuth, which checks that a user is authorized with a authToken as endpoints are called, there is also the error handling middleware.
+- [X] **Calls to third party endpoints** - Random Word calls a third party endpoint with api nija, which returns a random word object. Note I call this endpoint in the gameHelper.js since that made more since as the game calls the method and not a person.
+- [X] **Backend service endpoints** - I implemented a lot of endpoints for this project, including ones that create, login, and logout a user. Also the game endpoints include: createOrJoinRoom , setTeam, playGame, getGameState etc.Live chat endpoints include addMessage, getChatMessages. Most of these endpoints are fairly intuitive and mixed with a lot of helper functions.
+- [X] **Frontend calls service endpoints** - All endpoints are succesfully called through either time intervals(for the endpoints that get the gameState or chatMessages) or buttons that are explicit on what they do. Additionally, I use the use effect as well to update the gameState to the frontend. However, that has proven problematic with updating the UI across various users in the same game. Hopefully the websocket fixes these issues.
+
+Please note, as the project currently stands at the end of this phase, it can be buggy when it comes to consistency across various user sessions in the UI and the data doesn't upload as correctly as it should, but that will be fixed when databases and websockets are implemented.(It seemed to work better in my local host though) As far as the specifications for this certain phase, everything is working. Also until you actually enter in the gameRoom the get gameState endpoin(called every 2 seconds) will return failed status.
 
 ## 🚀 DB/Login deliverable
 
