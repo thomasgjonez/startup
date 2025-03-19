@@ -138,7 +138,7 @@ export function Game({userName}) {
 
 useEffect(() => { //this changes the tables to reflect the actual gameState
   if (!currentDescriber) return;
-
+  //Basically i have to convert the maps to arrays and then iterate through each one to determine if they are the describer or not
   setBlueTeam((prevBlueTeam) => {
     const updatedBlueTeam = Object.entries(prevBlueTeam).reduce((acc, [username, player]) => {
       acc[username] = {
@@ -164,7 +164,7 @@ useEffect(() => { //this changes the tables to reflect the actual gameState
   setIsUserDescriber(currentDescriber.username === userName);
 }, [currentDescriber]);
 
-useEffect(() => {     //prompts the user to write a response
+useEffect(() => {     //prompts the describer to write a response
   if (isUserDescriber) {
     const userDescription = prompt(`It's your turn to describe the word "${randomWord}"! Enter your description:`);
 
@@ -210,7 +210,6 @@ const getGreenPiecePosition = (score) => {
           setCurrentDescriber(data.currentDescriber);
           setBlueTeamPts(data.blueTeamPts);
           setGreenTeamPts(data.greenTeamPts);
-          setTeamTurn(data.teamTurn);
         }
       } catch (error) {
         console.error("Error fetching game state:", error);

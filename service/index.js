@@ -66,15 +66,12 @@ apiRouter.delete('/auth/logout', async (req, res) => {
   });
 
 //Game Room managment section
-apiRouter.post('/game/createOrJoinRoom',(req,res) => {
+apiRouter.post('/game/createOrJoinRoom', requireAuth, (req,res) => {
     console.log('createOrJoinRoom endpoint called')
     try{
       const {roomCode, username} = req.body;
       if (!roomCode){
           return res.status(400).send({msg:'Room Code is required'});
-      }
-      if (!username){
-          return res.status(400).send({msg:'Username is required/you need to login in. How did you even get to this screen lol'})
       }
       // creates an empty gameState/object with the roomCode
       let gameState = games[roomCode];
@@ -112,7 +109,7 @@ apiRouter.post('/game/createOrJoinRoom',(req,res) => {
   });
 
   //Team and Player Setup section
-  apiRouter.post('/game/setTeams', (req, res) => {
+  apiRouter.post('/game/setTeams', requireAuth, (req, res) => {
       const { roomCode } = req.body;
       if (!roomCode){
           return res.status(400).send({msg:'Room Code is required'});
@@ -144,7 +141,7 @@ apiRouter.post('/game/createOrJoinRoom',(req,res) => {
 )
 
 //Round Management, pick describer, get random word, start and end rounds, timer etc
-apiRouter.post('/game/start', (req, res) => {
+apiRouter.post('/game/start', requireAuth, (req, res) => {
   console.log('start game endpoint hit');
   const { roomCode } = req.body;
   if (!roomCode) {
@@ -170,7 +167,7 @@ apiRouter.post('/game/start', (req, res) => {
 });
 
 //Game State and updates
-apiRouter.post('/game/guessWord', (req, res) => {
+apiRouter.post('/game/guessWord', requireAuth, (req, res) => {
   console.log("Received guessWord request:", req.body);
 
   const { roomCode, guessedWord, username } = req.body;
@@ -208,7 +205,7 @@ apiRouter.post('/game/guessWord', (req, res) => {
 });
 
 
-apiRouter.post('/game/description', (req, res) => {
+apiRouter.post('/game/description', requireAuth, (req, res) => {
   const {roomCode, username, description} = req.body;
   const gameState = games[roomCode];
   if (!gameState) {
@@ -224,7 +221,7 @@ apiRouter.post('/game/description', (req, res) => {
   console.log(`New description for room ${roomCode}: ${description}`);
 })
 
-apiRouter.get('/game/state', (req, res) => {
+apiRouter.get('/game/state', requireAuth, (req, res) => {
   const {roomCode} = req.query;
   const gameState = games[roomCode];
   if (!gameState) {
@@ -234,7 +231,7 @@ apiRouter.get('/game/state', (req, res) => {
 })
 
 //Live Chat section
-apiRouter.post('/main/addMessage', (req, res) => {
+apiRouter.post('/main/addMessage', requireAuth, (req, res) => {
   const {username, message} = req.body;
   if (!message){
     console.log('no message')
@@ -285,6 +282,22 @@ async function createUser(username, email, password) {
     if (!value) return null;
   
     return users.find((u) => u[field] === value);
+  }
+
+  function requireAuth(req, res, next) {
+    const token = req.cookies[authCookieName]; // Get the auth token from cookies
+
+    if (!token) {
+        return res.status(401).json({ msg: 'Unauthorized: No token provided' });
+    }
+
+    const user = users.find(u => u.token === token);
+    if (!user) {
+        return res.status(403).json({ msg: 'Forbidden: Invalid token' });
+    }
+
+    req.user = user;
+    next();
   }
 
   // setAuthCookie in the HTTP response

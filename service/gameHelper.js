@@ -88,7 +88,7 @@ async function getRandomWord() {
       const data = await response.json();
       console.log('Random Word:', data.word);
 
-      const word = Adata.word[0];
+      const word = data.word[0];
       
       console.log('Random Word:', word);
       return word;
