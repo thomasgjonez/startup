@@ -14,7 +14,7 @@ const games = {};
 const chatMessages = [];
 
 // The service port. In production the front-end code is statically hosted by the service on the same port.
-const port = process.argv.length > 2 ? process.argv[2] : 3000;
+const port = process.argv.length > 2 ? process.argv[2] : 4000;
 
 // JSON body parsing using built-in middleware
 app.use(express.json());
@@ -91,7 +91,7 @@ apiRouter.post('/game/createOrJoinRoom', requireAuth, (req,res) => {
               blueDescriberIndex: 0,
               greenDescriberIndex: 0,
               describerResponse: "",
-              winCondition: false
+              winCondition: false,
           }
           games[roomCode] = gameState;
       }
@@ -308,6 +308,7 @@ function setAuthCookie(res, authToken) {
       sameSite: 'strict',
     });
 }
+
 
 function clearChat() {
   chatMessages.length = 0; // Empty the chat array
