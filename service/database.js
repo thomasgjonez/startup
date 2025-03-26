@@ -55,12 +55,20 @@ const chatCollection = db.collection('chat');
     return gameCollection.findOne({ roomCode });
   }
   
-  async function addChatMessage(message) {
-    await chatCollection.insertOne(message);
+  async function addChatMessage({ username, message }) {
+    const chatEntry = {
+        username,
+        message,
+      };
+    
+      await chatCollection.insertOne(chatEntry);
   }
   
   async function getChatMessages() {
-    return chatCollection.find().toArray();
+    return chatCollection
+    .find({})
+    .sort({ timestamp: 1 })
+    .toArray();
   }
 
   module.exports = {

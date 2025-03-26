@@ -229,7 +229,7 @@ apiRouter.post('/game/description', requireAuth, async (req, res) => {
 apiRouter.get('/game/state', requireAuth, async(req, res) => {
   const {roomCode} = req.query;
   const gameState = await DB.getGame(roomCode);
-  
+
   if (!gameState) {
     return res.status(404).send({ msg: 'Game room not found' });
   }
@@ -237,7 +237,7 @@ apiRouter.get('/game/state', requireAuth, async(req, res) => {
 })
 
 //Live Chat section
-apiRouter.post('/main/addMessage', requireAuth, (req, res) => {
+apiRouter.post('/main/addMessage', requireAuth, async(req, res) => {
   const {username, message} = req.body;
   if (!message){
     console.log('no message')
@@ -246,7 +246,7 @@ apiRouter.post('/main/addMessage', requireAuth, (req, res) => {
   if (!username){
     console.log('no username')
   }
-  chatMessages.push({username, message});
+  await DB.addChatMessage({username,  message})
 
   return res.status(200).send({ msg: 'Message added successfully' });
 })
