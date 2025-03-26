@@ -106,12 +106,13 @@ apiRouter.post('/game/createOrJoinRoom', requireAuth, async (req,res) => {
   });
 
   //Team and Player Setup section
-  apiRouter.post('/game/setTeams', requireAuth, (req, res) => {
+  apiRouter.post('/game/setTeams', requireAuth, async (req, res) => {
       const { roomCode } = req.body;
       if (!roomCode){
           return res.status(400).send({msg:'Room Code is required'});
       }
-      const gameState = games[roomCode];
+      const gameState = await DB.getGame(roomCode);
+      
       if (!gameState) {
           return res.status(404).send({ msg: 'Game room not found, most likely internal error. Make sure you enter room code again' });
       }
@@ -119,9 +120,9 @@ apiRouter.post('/game/createOrJoinRoom', requireAuth, async (req,res) => {
           return res.status(400).send({ msg: 'Not enough players to form teams' });
         }
       // reset the teams before adding to them
+      resetGame(gameState);
       gameState.blueTeam = {};
       gameState.greenTeam = {};
-      resetGame(gameState);
       //add every other player to team
       const playerNames = Object.keys(gameState.players);
       playerNames.forEach((username, index) => {
@@ -130,7 +131,8 @@ apiRouter.post('/game/createOrJoinRoom', requireAuth, async (req,res) => {
         } else {
             gameState.greenTeam[username] = { guessedWord: '', turn: '' };
         }
-    });
+     });
+      await DB.saveGame(gameState);
 
       res.status(200).send({ msg: 'Teams have been set successfully', gameState });
 
