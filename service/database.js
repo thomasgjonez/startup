@@ -35,3 +35,23 @@ const chatCollection = db.collection('chat');
   async function updateUser(user) {
     await userCollection.updateOne({ email: user.email }, { $set: user });
   }
+
+  async function saveGame(game) {
+    await db.collection('games').updateOne(
+      { roomCode: game.roomCode },
+      { $set: game },
+      { upsert: true }
+    );
+  }
+  
+  async function getGame(roomCode) {
+    return db.collection('games').findOne({ roomCode });
+  }
+  
+  async function addChatMessage(message) {
+    await db.collection('messages').insertOne(message);
+  }
+  
+  async function getChatMessages() {
+    return db.collection('messages').find().toArray();
+  }
