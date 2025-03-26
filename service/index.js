@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs');
 const express = require('express');
 const uuid = require('uuid');
 const app = express();
-const { runGame, pickDescriber, startRound, compareWords, getRandomWord, resetGame } = require('./gameHelper');
+const { runGame, pickDescriber, startRound, compareWords, resetGame } = require('./gameHelper');
 const DB = require('./database.js');
 
 const authCookieName = 'token';
@@ -41,8 +41,9 @@ apiRouter.post('/auth/login', async (req, res) => {
     const user = await findUser('username', req.body.username);
     if (user) {
       if (await bcrypt.compare(req.body.password, user.password)) {
-        user.token = uuid.v4();
-        setAuthCookie(res, user.token);
+        const newToken = uuid.v4();
+        await DB.updateUserToken(user.username, newToken);
+        setAuthCookie(res, newToken);
         res.send({ username: user.username});
         return;
       }
@@ -52,9 +53,11 @@ apiRouter.post('/auth/login', async (req, res) => {
   
 // DeleteAuth logout a user
 apiRouter.delete('/auth/logout', async (req, res) => {
-    const user = await findUser('token', req.cookies[authCookieName]);
+    const token = req.cookies[authCookieName];
+    const user = await findUser(token,'token');
+
     if (user) {
-      delete user.token;
+      await DB.updateUserToken(user.username, null);
     }
     res.clearCookie(authCookieName);
     res.status(204).end();
@@ -87,6 +90,7 @@ apiRouter.post('/game/createOrJoinRoom', requireAuth, async (req,res) => {
               greenDescriberIndex: 0,
               describerResponse: "",
               winCondition: false,
+              wordGuessed: false
           }
           
       }
@@ -156,11 +160,9 @@ apiRouter.post('/game/start', requireAuth, async (req, res) => {
 
   try {
     resetGame(gameState);
-    pickDescriber(gameState);
-    startRound(gameState);
-    runGame(gameState);
-
-    await DB.saveGame(gameState);
+    await pickDescriber(gameState);
+    await startRound(gameState);
+    await runGame(gameState);
 
     res.status(200).send({ msg: `Game started for room ${roomCode}`, gameState });
 
@@ -199,9 +201,8 @@ apiRouter.post('/game/guessWord', requireAuth, async (req, res) => {
 
       console.log(`Updated guessed word for ${username}: ${guessedWord}`);
 
-      compareWords(gameState, guessedWord);
+      await compareWords(gameState, guessedWord);
 
-      await DB.saveGame(gameState);
       res.status(200).send({ msg: 'Guess submitted successfully', gameState });
   } catch (error) {
       console.error("Error processing guess:", error);

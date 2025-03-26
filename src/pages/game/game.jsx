@@ -121,9 +121,11 @@ export function Game({userName}) {
           const data = await response.json();
           console.log("Guess submitted:", data);
 
-          setGameState(data);
-          setBlueTeam(data.blueTeam);
-          setGreenTeam(data.greenTeam);
+          const newGameState = data.gameState;
+
+          setGameState(newGameState);
+          setBlueTeam(newGameState.blueTeam);
+          setGreenTeam(newGameState.greenTeam);
 
       } catch (error) {
           console.error("Error submitting guess:", error);

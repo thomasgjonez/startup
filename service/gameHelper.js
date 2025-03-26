@@ -1,34 +1,42 @@
 const ninjaAPIKey = 'gdUXgBuLnhEv/my9sMG25A==bJmFMklsLvLluQa2'
+const DB = require('./database');
 
 //section of running the game/rounds
-function runGame(gameState){
-    function roundLoop() {
+function runGame(initialGameState){
+    async function roundLoop() {
+      const gameState = await DB.getGame(initialGameState.roomCode);
+
         if (gameState.winCondition) {
           console.log("Game ended.");
           hardReset(gameState);
           return;
         }
+
         if (gameState.timer > 0) {
-          setTimeout(() => {
-            gameState.timer--;
-            roundLoop();
+          setTimeout(async() => {
+          gameState.timer--;
+          await DB.updateTimer(gameState.roomCode, gameState.timer);
+          roundLoop();
           }, 1000);
         } else {
-          endRound(gameState);
+          await endRound(gameState);
           roundLoop();
         }
       }
       roundLoop();
 }
 
-async function startRound(gameState){
+async function startRound(gameState){//really should be named start game as it only deals with the original round
     if (gameState.winCondition) return;
-        gameState.timer = 10; //10 second runs for testing, I'll change in the future
+        gameState.timer = 30; //10 second runs for testing, I'll change in the future
         gameState.randomWord = await getRandomWord();
         console.log(`Round started. New word: ${gameState.randomWord}`);
+
+        await DB.saveGame(gameState);
 }
 
-function endRound(gameState){
+async function endRound(staleState){
+    const gameState = await DB.getGame(staleState.roomCode);
     if (gameState.teamTurn === "blue") {
         gameState.greenTeamPts++;
       } else {
@@ -38,24 +46,50 @@ function endRound(gameState){
       if (gameState.blueTeamPts >= 6 || gameState.greenTeamPts >= 6) {
         gameState.winCondition = true;
         console.log("Game over.");
-      } else {
-        startRound(gameState);
+        await DB.saveGame(gameState);
+        return;
       }
+      gameState.wordGuessed = false;
+      gameState.timer = 30;
+      gameState.randomWord = await getRandomWord();
+      await pickDescriber(gameState);
+    
+      Object.values(gameState.blueTeam).forEach(p => p.guessedWord = '');
+      Object.values(gameState.greenTeam).forEach(p => p.guessedWord = '');
+    
+      await DB.saveGame(gameState);
 }
 
-function compareWords(gameState, guessedWord){
-    if (gameState.randomWord.trim().toLowerCase() === guessedWord.toLowerCase()){
-        const guessingTeam = gameState.teamTurn === "blue" ? "green" : "blue";
-        gameState.teamTurn = guessingTeam
-        gameState.randomWord = getRandomWord();
-        pickDescriber(gameState);
-    } 
+async function compareWords(staleGameState, guessedWord){
+    const gameState = await DB.getGame(staleGameState.roomCode);
+
+    const expected = (gameState.randomWord || "").trim().toLowerCase();
+    const actual = (guessedWord || "").trim().toLowerCase();
+  
+    console.log("Comparing words:");
+    console.log("Expected:", expected);
+    console.log("Guessed:", actual);
+    console.log("Equal:", expected === actual);
+  
+    if (expected === actual) {
+      console.log("Word matched! Switching team...");
+      gameState.teamTurn = gameState.teamTurn === 'blue' ? 'green' : 'blue';
+      //gameState.wordGuessed = true;
+  
+      gameState.randomWord = await getRandomWord();
+      Object.values(gameState.blueTeam).forEach(p => (p.guessedWord = ""));
+      Object.values(gameState.greenTeam).forEach(p => (p.guessedWord = ""));
+      await pickDescriber(gameState);
+      await DB.saveGame(gameState);
+    } else {
+      console.log("words did not match");
+    }
 }
 
-function pickDescriber(gameState) {
-    let currentTeam = gameState.teamTurn === "blue" ? gameState.blueTeam : gameState.greenTeam;
+async function pickDescriber(gameState) {
+    let currentTeam = gameState.teamTurn === 'blue' ? gameState.blueTeam : gameState.greenTeam;
     let teamKeys = Object.keys(currentTeam);
-    let describerIndex = gameState.teamTurn === "blue" ? gameState.blueDescriberIndex : gameState.greenDescriberIndex;
+    let describerIndex = gameState.teamTurn === 'blue' ? gameState.blueDescriberIndex : gameState.greenDescriberIndex;
   
     if (teamKeys.length === 0) {
       console.warn("Teams are empty! Cannot pick describer.");
@@ -65,13 +99,15 @@ function pickDescriber(gameState) {
     let selectedDescriber = teamKeys[describerIndex % teamKeys.length];
     gameState.currentDescriber = { username: selectedDescriber };
 
-    if (gameState.teamTurn === "blue") {
+    if (gameState.teamTurn === 'blue') {
         gameState.blueDescriberIndex = (describerIndex + 1) % teamKeys.length;
     } else {
         gameState.greenDescriberIndex = (describerIndex + 1) % teamKeys.length;
     }
     
     gameState.describerResponse = "";//this will be set with the description endpoint
+    
+    await DB.saveGame(gameState);
   }
 
 //section for helper functions
@@ -104,15 +140,16 @@ function resetGame(gameState){
   gameState.greenTeamPts = 0;
   gameState.blueTeamPts = 0;
   gameState.timer = 0;
-  gameState.random = '';
+  gameState.randomWord = '';
   gameState.currentDescriber = null;
   gameState.describerResponse = "";
   gameState.teamTurn = 'blue';
   gameState.winCondition = false;
+  gameState.wordGuessed = false;
 }
 //this function basically resets every field including roomCode
 function hardReset(gameState){
-  setTimeout(() => {
+  setTimeout(async() => {
     if (gameState) {
       gameState.roomCode = "";
       gameState.players = {};
@@ -128,7 +165,9 @@ function hardReset(gameState){
       gameState.greenDescriberIndex = 0;
       gameState.describerResponse = "";
       gameState.winCondition = false;
+      gameState.wordGuessed = false;
 
+      await DB.saveGame(gameState);
       console.log("Game state has been reset.");
     }
   }, 30000); 
@@ -139,7 +178,6 @@ function hardReset(gameState){
     getRandomWord,
     compareWords,
     pickDescriber,
-    getRandomWord,
     startRound,
     endRound,
     runGame,

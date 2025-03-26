@@ -44,10 +44,18 @@ const chatCollection = db.collection('chat');
 }
 
   async function saveGame(game) {
+    const { _id, ...restOfGame } = game;
     await gameCollection.updateOne(
-      { roomCode: game.roomCode },
-      { $set: game },
-      { upsert: true }
+        { roomCode: game.roomCode },
+        { $set: restOfGame },
+        { upsert: true }
+    );
+  }
+
+  async function updateTimer(roomCode, newTimer) {
+    await gameCollection.updateOne(
+      { roomCode },
+      { $set: { timer: newTimer } }
     );
   }
   
@@ -85,5 +93,6 @@ const chatCollection = db.collection('chat');
     addChatMessage,
     getChatMessages,
     updateUserToken,
-    clearChatMessages
+    clearChatMessages,
+    updateTimer
   };
