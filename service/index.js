@@ -8,11 +8,6 @@ const DB = require('./database.js');
 
 const authCookieName = 'token';
 
-// The games and users are saved in memory and disappear whenever the service is restarted.
-const users = [];
-const games = {};
-const chatMessages = [];
-
 // The service port. In production the front-end code is statically hosted by the service on the same port.
 const port = process.argv.length > 2 ? process.argv[2] : 4000;
 
@@ -66,7 +61,7 @@ apiRouter.delete('/auth/logout', async (req, res) => {
   });
 
 //Game Room managment section
-apiRouter.post('/game/createOrJoinRoom', requireAuth, (req,res) => {
+apiRouter.post('/game/createOrJoinRoom', requireAuth, async (req,res) => {
     console.log('createOrJoinRoom endpoint called')
     try{
       const {roomCode, username} = req.body;
@@ -74,7 +69,7 @@ apiRouter.post('/game/createOrJoinRoom', requireAuth, (req,res) => {
           return res.status(400).send({msg:'Room Code is required'});
       }
       // creates an empty gameState/object with the roomCode
-      let gameState = games[roomCode];
+      let gameState = await DB.getGame(roomCode);
       //checks to make sure there is no game going on, if not make a gameState
       if (!gameState){
           gameState = {
@@ -93,12 +88,14 @@ apiRouter.post('/game/createOrJoinRoom', requireAuth, (req,res) => {
               describerResponse: "",
               winCondition: false,
           }
-          games[roomCode] = gameState;
+          
       }
       //checks to see if player is in the game already, if not-> add them
       if (!gameState.players[username]) {
         gameState.players[username] = { guessedWord: '', turn: '' };
         }
+
+      await DB.saveGame();
       
         res.status(200).send({ msg: 'Joined game', gameState });
       }catch(error){
@@ -287,14 +284,14 @@ async function createUser(username, email, password) {
     return DB.getUser(value);
   }
 
-  function requireAuth(req, res, next) {
+  async function requireAuth(req, res, next) {
     const token = req.cookies[authCookieName]; // Get the auth token from cookies
 
     if (!token) {
         return res.status(401).json({ msg: 'Unauthorized: No token provided' });
     }
 
-    const user = DB.getUserByToken('token', token);
+    const user = await DB.getUserByToken('token', token);
     if (!user) {
         return res.status(403).json({ msg: 'Forbidden: Invalid token' });
     }
