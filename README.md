@@ -154,11 +154,11 @@ Please note, as the project currently stands at the end of this phase, it can be
 
 For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
 
-- [ ] **User registration** - I did not complete this part of the deliverable.
-- [ ] **User login and logout** - I did not complete this part of the deliverable.
-- [ ] **Stores data in MongoDB** - I did not complete this part of the deliverable.
-- [ ] **Stores credentials in MongoDB** - I did not complete this part of the deliverable.
-- [ ] **Restricts functionality based on authentication** - I did not complete this part of the deliverable.
+- [x] **User registration** - Stores username, email, hashedpassword, and authToken into a collection called user on mongo.
+- [x] **User login and logout** - if a user is found in the db and the passwords are the same then it adds an authToken to the user in the database and allows you to hit protected endpoints such as playing the game. Logout makes your authToken null and exits you to the home menu where you can login in again.
+- [x] **Stores data in MongoDB** - There are three collections in my database for the startup. User, game, and chat. User stores the username, password, email, and authToken. Game stores all the needed information specific to a unique game marked by its roomCode. Chat stores the messages made by users, which is deleted every 30 seconds so you don't have an exponentially growing chat message box at the bottom of the page. I'm looking into Mongo further so that I can just display the most recent messages and not delete the chat every 30 seconds. For this delieveralbe my current method is sufficient. 
+- [x] **Stores credentials in MongoDB** - I have my credentials stored in a file in the service directory
+- [x] **Restricts functionality based on authentication** - Like I mentioned before, you can't access the game page unless you have an authToken stored in the database.
 
 ## 🚀 WebSocket deliverable
 

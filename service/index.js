@@ -89,8 +89,7 @@ apiRouter.post('/game/createOrJoinRoom', requireAuth, async (req,res) => {
               blueDescriberIndex: 0,
               greenDescriberIndex: 0,
               describerResponse: "",
-              winCondition: false,
-              wordGuessed: false
+              winCondition: false
           }
           
       }

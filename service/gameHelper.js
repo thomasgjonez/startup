@@ -62,19 +62,12 @@ async function endRound(staleState){
 
 async function compareWords(staleGameState, guessedWord){
     const gameState = await DB.getGame(staleGameState.roomCode);
-
     const expected = (gameState.randomWord || "").trim().toLowerCase();
     const actual = (guessedWord || "").trim().toLowerCase();
-  
-    console.log("Comparing words:");
-    console.log("Expected:", expected);
-    console.log("Guessed:", actual);
-    console.log("Equal:", expected === actual);
   
     if (expected === actual) {
       console.log("Word matched! Switching team...");
       gameState.teamTurn = gameState.teamTurn === 'blue' ? 'green' : 'blue';
-      //gameState.wordGuessed = true;
   
       gameState.randomWord = await getRandomWord();
       Object.values(gameState.blueTeam).forEach(p => (p.guessedWord = ""));
@@ -145,7 +138,6 @@ function resetGame(gameState){
   gameState.describerResponse = "";
   gameState.teamTurn = 'blue';
   gameState.winCondition = false;
-  gameState.wordGuessed = false;
 }
 //this function basically resets every field including roomCode
 function hardReset(gameState){
@@ -165,7 +157,6 @@ function hardReset(gameState){
       gameState.greenDescriberIndex = 0;
       gameState.describerResponse = "";
       gameState.winCondition = false;
-      gameState.wordGuessed = false;
 
       await DB.saveGame(gameState);
       console.log("Game state has been reset.");
