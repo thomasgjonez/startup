@@ -210,7 +210,7 @@ apiRouter.post('/game/guessWord', requireAuth, async (req, res) => {
 });
 
 
-apiRouter.post('/game/description', requireAuth, (req, res) => {
+apiRouter.post('/game/description', requireAuth, async (req, res) => {
   const {roomCode, username, description} = req.body;
   const gameState = games[roomCode];
   if (!gameState) {
@@ -222,13 +222,14 @@ apiRouter.post('/game/description', requireAuth, (req, res) => {
   }
 
   gameState.describerResponse = description;
-  //testing purposes, frontend will get rid of need for this 
-  console.log(`New description for room ${roomCode}: ${description}`);
+  
+  await DB.saveGame(gameState);
 })
 
-apiRouter.get('/game/state', requireAuth, (req, res) => {
+apiRouter.get('/game/state', requireAuth, async(req, res) => {
   const {roomCode} = req.query;
-  const gameState = games[roomCode];
+  const gameState = await DB.getGame(roomCode);
+  
   if (!gameState) {
     return res.status(404).send({ msg: 'Game room not found' });
   }
