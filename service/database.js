@@ -20,8 +20,8 @@ const chatCollection = db.collection('chat');
     }
   })();
 
-  function getUser(email) {
-    return userCollection.findOne({ email: email });
+  function getUser(username) {
+    return userCollection.findOne({ username: username  });
   }
   
   function getUserByToken(token) {
@@ -33,11 +33,18 @@ const chatCollection = db.collection('chat');
   }
   
   async function updateUser(user) {
-    await userCollection.updateOne({ email: user.email }, { $set: user });
+    await userCollection.updateOne({ username: user.username }, { $set: user });
   }
 
+  async function updateUserToken(username, token) {
+  await userCollection.updateOne(
+    { username: username },
+    { $set: { token: token } }
+  );
+}
+
   async function saveGame(game) {
-    await db.collection('games').updateOne(
+    await gameCollection.updateOne(
       { roomCode: game.roomCode },
       { $set: game },
       { upsert: true }
@@ -45,13 +52,25 @@ const chatCollection = db.collection('chat');
   }
   
   async function getGame(roomCode) {
-    return db.collection('games').findOne({ roomCode });
+    return gameCollection.findOne({ roomCode });
   }
   
   async function addChatMessage(message) {
-    await db.collection('messages').insertOne(message);
+    await chatCollection.insertOne(message);
   }
   
   async function getChatMessages() {
-    return db.collection('messages').find().toArray();
+    return chatCollection.find().toArray();
   }
+
+  module.exports = {
+    getUser,
+    getUserByToken,
+    addUser,
+    updateUser,
+    saveGame,
+    getGame,
+    addChatMessage,
+    getChatMessages,
+    updateUserToken
+  };
