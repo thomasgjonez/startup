@@ -140,23 +140,27 @@ apiRouter.post('/game/createOrJoinRoom', requireAuth, async (req,res) => {
 )
 
 //Round Management, pick describer, get random word, start and end rounds, timer etc
-apiRouter.post('/game/start', requireAuth, (req, res) => {
+apiRouter.post('/game/start', requireAuth, async (req, res) => {
   console.log('start game endpoint hit');
   const { roomCode } = req.body;
   if (!roomCode) {
     console.log('Room code not found');
     return res.status(400).send({ msg: 'Room code is required' });
   }
-  const gameState = games[roomCode];
+  const gameState = await DB.getGame(roomCode);
+
   if (!gameState) {
     console.log('game state not found');
     return res.status(404).send({ msg: 'Game room not found' });
   }
-  resetGame(gameState);
+
   try {
+    resetGame(gameState);
     pickDescriber(gameState);
     startRound(gameState);
     runGame(gameState);
+
+    await DB.saveGame(gameState);
 
     res.status(200).send({ msg: `Game started for room ${roomCode}`, gameState });
 
@@ -166,7 +170,7 @@ apiRouter.post('/game/start', requireAuth, (req, res) => {
 });
 
 //Game State and updates
-apiRouter.post('/game/guessWord', requireAuth, (req, res) => {
+apiRouter.post('/game/guessWord', requireAuth, async (req, res) => {
   console.log("Received guessWord request:", req.body);
 
   const { roomCode, guessedWord, username } = req.body;
@@ -176,7 +180,7 @@ apiRouter.post('/game/guessWord', requireAuth, (req, res) => {
       return res.status(400).send({ msg: 'roomCode and guessedWord are required' });
   }
 
-  const gameState = games[roomCode];
+  const gameState = await DB.getGame(roomCode);
   
   if (!gameState) {
       console.error(`Game room not found: ${roomCode}`);
@@ -196,6 +200,8 @@ apiRouter.post('/game/guessWord', requireAuth, (req, res) => {
       console.log(`Updated guessed word for ${username}: ${guessedWord}`);
 
       compareWords(gameState, guessedWord);
+
+      await DB.saveGame(gameState);
       res.status(200).send({ msg: 'Guess submitted successfully', gameState });
   } catch (error) {
       console.error("Error processing guess:", error);
