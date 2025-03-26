@@ -280,8 +280,11 @@ async function createUser(username, email, password) {
   
   async function findUser(field, value) {
     if (!value) return null;
-  
-    return users.find((u) => u[field] === value);
+
+    if (field === 'token') {
+      return DB.getUserByToken(value);
+    }
+    return DB.getUser(value);
   }
 
   function requireAuth(req, res, next) {
@@ -291,7 +294,7 @@ async function createUser(username, email, password) {
         return res.status(401).json({ msg: 'Unauthorized: No token provided' });
     }
 
-    const user = users.find(u => u.token === token);
+    const user = DB.getUserByToken('token', token);
     if (!user) {
         return res.status(403).json({ msg: 'Forbidden: Invalid token' });
     }
