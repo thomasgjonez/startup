@@ -95,7 +95,7 @@ apiRouter.post('/game/createOrJoinRoom', requireAuth, async (req,res) => {
         gameState.players[username] = { guessedWord: '', turn: '' };
         }
 
-      await DB.saveGame();
+      await DB.saveGame(gameState);
       
         res.status(200).send({ msg: 'Joined game', gameState });
       }catch(error){
@@ -212,7 +212,7 @@ apiRouter.post('/game/guessWord', requireAuth, async (req, res) => {
 
 apiRouter.post('/game/description', requireAuth, async (req, res) => {
   const {roomCode, username, description} = req.body;
-  const gameState = games[roomCode];
+  const gameState = await DB.getGame(roomCode);
   if (!gameState) {
     return res.status(404).send({ msg: 'Game room not found' });
   }
@@ -251,11 +251,14 @@ apiRouter.post('/main/addMessage', requireAuth, async(req, res) => {
   return res.status(200).send({ msg: 'Message added successfully' });
 })
 //
-apiRouter.get('/main/getMessage', (req, res) => {
-  if(!chatMessages || chatMessages.length === 0){
-    return res.status(200).json([]);
+apiRouter.get('/main/getMessage', async (req, res) => {
+  try {
+    const messages = await DB.getChatMessages();
+    res.status(200).json(messages);
+  } catch (error) {
+    console.error("Failed to fetch chat messages:", error);
+    res.status(500).json({ msg: "Failed to get chat messages" });
   }
-  res.status(200).json(chatMessages);
 })
 
 
@@ -296,7 +299,7 @@ async function createUser(username, email, password) {
         return res.status(401).json({ msg: 'Unauthorized: No token provided' });
     }
 
-    const user = await DB.getUserByToken('token', token);
+    const user = await DB.getUserByToken(token);
     if (!user) {
         return res.status(403).json({ msg: 'Forbidden: Invalid token' });
     }
