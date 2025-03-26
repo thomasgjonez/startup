@@ -258,10 +258,6 @@ apiRouter.get('/main/getMessage', (req, res) => {
   res.status(200).json(chatMessages);
 })
 
-// apiRouter.delete('/main/clearChat', (req, res) => {
-//   chatMessages.length = 0;
-//   return res.status(200).json({ msg: "Chat cleared successfully" });;
-// })
 
 // Default error handler
 app.use(function (err, req, res, next) {
@@ -319,9 +315,13 @@ function setAuthCookie(res, authToken) {
 }
 
 
-function clearChat() {
-  chatMessages.length = 0; // Empty the chat array
-  console.log("Chat cleared for all users.");
+async function clearChat() {
+  try {
+    const result = await DB.clearChatMessages(); 
+    console.log(`Cleared ${result.deletedCount} chat messages.`);
+  } catch (error) {
+    console.error("Error clearing chat messages:", error);
+  }
 }
 
 setInterval(() => {

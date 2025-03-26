@@ -71,6 +71,10 @@ const chatCollection = db.collection('chat');
     .toArray();
   }
 
+  async function clearChatMessages(){
+    return await chatCollection.deleteMany({});
+  }
+
   module.exports = {
     getUser,
     getUserByToken,
@@ -80,5 +84,6 @@ const chatCollection = db.collection('chat');
     getGame,
     addChatMessage,
     getChatMessages,
-    updateUserToken
+    updateUserToken,
+    clearChatMessages
   };
