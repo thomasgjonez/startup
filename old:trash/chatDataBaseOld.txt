@@ -1,0 +1,95 @@
+const chatCollection = db.collection('chat');
+
+async function addChatMessage({ username, message }) {
+    const chatEntry = {
+        username,
+        message,
+      };
+    
+      await chatCollection.insertOne(chatEntry);
+  }
+  
+  async function getChatMessages() {
+    return chatCollection
+    .find({})
+    .sort({ timestamp: 1 })
+    .toArray();
+  }
+
+  async function clearChatMessages(){
+    return await chatCollection.deleteMany({});
+  }
+
+  //Live Chat section
+apiRouter.post('/main/addMessage', requireAuth, async(req, res) => {
+  const {username, message} = req.body;
+  if (!message){
+    console.log('no message')
+    return res.status(400).send({msg: 'No chat message'})
+  }
+  if (!username){
+    console.log('no username')
+  }
+  await DB.addChatMessage({username,  message})
+
+  return res.status(200).send({ msg: 'Message added successfully' });
+})
+//
+apiRouter.get('/main/getMessage', async (req, res) => {
+  try {
+    const messages = await DB.getChatMessages();
+    res.status(200).json(messages);
+  } catch (error) {
+    console.error("Failed to fetch chat messages:", error);
+    res.status(500).json({ msg: "Failed to get chat messages" });
+  }
+})
+
+async function clearChat() {
+  try {
+    const result = await DB.clearChatMessages(); 
+    console.log(`Cleared ${result.deletedCount} chat messages.`);
+  } catch (error) {
+    console.error("Error clearing chat messages:", error);
+  }
+}
+
+setInterval(() => {
+  clearChat();
+}, 30000);
+
+const addMessage = async () => {
+    try {
+      const response = await fetch('/api/main/addMessage', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ username: userName, message: inputMessage }),
+      });
+
+      console.log(userName);
+      console.log(inputMessage);
+
+      if (!response.ok) throw new Error('Failed to send message');
+
+      setInputMessage(""); // Clear input field after sending
+    } catch (error) {
+      console.error('Error sending message:', error);
+    }
+  };
+
+  useEffect(() => {
+    const fetchMessages = async () => {
+      try {
+        const response = await fetch('/api/main/getMessage');
+        if (!response.ok) throw new Error('Failed to fetch messages');
+
+        const data = await response.json();
+        setMessages(prevMessages => [...prevMessages, ...data]);
+      } catch (error) {
+        console.error('Error fetching messages:', error);
+      }
+    };
+
+    const interval = setInterval(fetchMessages, 5000);
+    return () => clearInterval(interval);
+  }, []);

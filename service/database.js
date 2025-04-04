@@ -8,7 +8,6 @@ const client = new MongoClient(url);
 const db = client.db('catchphrase');
 const userCollection = db.collection('user');
 const gameCollection = db.collection('game');
-const chatCollection = db.collection('chat');
 
 (async function testConnection() {
     try {
@@ -63,25 +62,6 @@ const chatCollection = db.collection('chat');
     return gameCollection.findOne({ roomCode });
   }
   
-  async function addChatMessage({ username, message }) {
-    const chatEntry = {
-        username,
-        message,
-      };
-    
-      await chatCollection.insertOne(chatEntry);
-  }
-  
-  async function getChatMessages() {
-    return chatCollection
-    .find({})
-    .sort({ timestamp: 1 })
-    .toArray();
-  }
-
-  async function clearChatMessages(){
-    return await chatCollection.deleteMany({});
-  }
 
   module.exports = {
     getUser,
@@ -90,9 +70,6 @@ const chatCollection = db.collection('chat');
     updateUser,
     saveGame,
     getGame,
-    addChatMessage,
-    getChatMessages,
     updateUserToken,
-    clearChatMessages,
     updateTimer
   };

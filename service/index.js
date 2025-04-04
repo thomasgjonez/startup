@@ -237,31 +237,6 @@ apiRouter.get('/game/state', requireAuth, async(req, res) => {
   return res.status(200).json(gameState);
 })
 
-//Live Chat section
-apiRouter.post('/main/addMessage', requireAuth, async(req, res) => {
-  const {username, message} = req.body;
-  if (!message){
-    console.log('no message')
-    return res.status(400).send({msg: 'No chat message'})
-  }
-  if (!username){
-    console.log('no username')
-  }
-  await DB.addChatMessage({username,  message})
-
-  return res.status(200).send({ msg: 'Message added successfully' });
-})
-//
-apiRouter.get('/main/getMessage', async (req, res) => {
-  try {
-    const messages = await DB.getChatMessages();
-    res.status(200).json(messages);
-  } catch (error) {
-    console.error("Failed to fetch chat messages:", error);
-    res.status(500).json({ msg: "Failed to get chat messages" });
-  }
-})
-
 
 // Default error handler
 app.use(function (err, req, res, next) {
@@ -317,20 +292,6 @@ function setAuthCookie(res, authToken) {
       sameSite: 'strict',
     });
 }
-
-
-async function clearChat() {
-  try {
-    const result = await DB.clearChatMessages(); 
-    console.log(`Cleared ${result.deletedCount} chat messages.`);
-  } catch (error) {
-    console.error("Error clearing chat messages:", error);
-  }
-}
-
-setInterval(() => {
-  clearChat();
-}, 30000);
 
 const httpService = app.listen(port, () => {
   console.log(`Listening on port ${port}`);
