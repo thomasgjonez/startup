@@ -5,6 +5,7 @@ const uuid = require('uuid');
 const app = express();
 const { runGame, pickDescriber, startRound, compareWords, resetGame } = require('./gameHelper');
 const DB = require('./database.js');
+const { peerProxy } = require('./peerProxy.js');
 
 const authCookieName = 'token';
 

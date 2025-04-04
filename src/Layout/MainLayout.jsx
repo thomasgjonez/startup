@@ -9,43 +9,51 @@ export default function MainLayout({ userName }) {
   const [inputMessage, setInputMessage] = useState("");
   const chatBoxRef = useRef(null);
 
+  // Set up the WebSocket connection
+  const socketRef = useRef(null);
+
+  // Connect to the WebSocket server
+  useEffect(() => {
+    // let port = window.location.port;
+    // const protocol = window.location.protocol === 'http:' ? 'ws' : 'wss';
+    // this.socket = new WebSocket(`${protocol}://${window.location.hostname}:${port}/ws`);
+    socketRef.current = new WebSocket('ws://localhost:4000');
+
+    socketRef.current.onopen = () => {
+      console.log("WebSocket connected");
+    };
+
+    // Listen for incoming messages from the WebSocket server
+    socketRef.current.onmessage = async (event) => {
+      const text = await event.data.text();
+      const newMessage = JSON.parse(text);
+      setMessages((prevMessages) => [...prevMessages, newMessage]);
+    };
+
+    return () => {
+      if (socketRef.current) {
+        socketRef.current.close();
+      }
+    };
+  }, []);
+
 const addMessage = async () => {
-    try {
-      const response = await fetch('/api/main/addMessage', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ username: userName, message: inputMessage }),
-      });
-      console.log(userName);
-      console.log(inputMessage);
-  
-      if (!response.ok) throw new Error('Failed to send message');
-  
-      setInputMessage(""); // Clear input field after sending
-    } catch (error) {
-      console.error('Error sending message:', error);
-    }
+  if (!inputMessage.trim()) return;
+
+  const message = {
+    username: userName,
+    message: inputMessage,
+    type: 'chat',
   };
 
-useEffect(() => {
-  const fetchMessages = async () => {
-    try {
-      const response = await fetch('/api/main/getMessage');
-      if (!response.ok) throw new Error('Failed to fetch messages');
-      
-      const data = await response.json();
-      setMessages(prevMessages => [...prevMessages, ...data]); 
-      //I have a server function that will clear the chat so its in sync for everyone
-      //await fetch('/api/main/clearChat', {method: 'DELETE'}); //clears chat array so that messages aren't printing over and over again
-      } catch (error) {
-      console.error('Error fetching messages:', error);
-    }
+  // Send the message to WebSocket server
+  socketRef.current.send(JSON.stringify(message));
+
+  //adds message so that the user who sent it can see it too
+  setMessages((prevMessages) => [...prevMessages, message]);
+
+  setInputMessage("");
   };
-
-  const interval = setInterval(fetchMessages, 5000);
-  return () => clearInterval(interval);
-}, []);
-
 
   useEffect(() => {
     if (chatBoxRef.current) {
