@@ -1,5 +1,5 @@
 import React from 'react';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import './game.css'
 
 export function Game({userName}) {
@@ -33,6 +33,39 @@ export function Game({userName}) {
     { left: "391px", top: "80px" },  // Position for score 5
     { left: "500px", top: "10px" },  // Position for score 6
   ];
+  const socketRef = useRef(null);
+
+  //websocket section
+  function connectToGameWebSocket(roomCode) {
+    if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
+      console.log("WebSocket already connected.");
+      return;
+    }
+  
+    socketRef.current = new WebSocket('ws://localhost:4000');
+  
+    socketRef.current.onopen = () => {
+      console.log("WebSocket connected to game room:", roomCode);
+      socketRef.current.send(JSON.stringify({
+        type: 'join',
+        roomCode,
+      }));
+    };
+  
+    socketRef.current.onmessage = (event) => {
+      const message = JSON.parse(event.data);
+      console.log("WS message:", message);
+      // Handle game update (maybe pass setGameState here if needed)
+    };
+  
+    socketRef.current.onerror = (err) => {
+      console.error("WebSocket error:", err);
+    };
+  
+    socketRef.current.onclose = () => {
+      console.log("WebSocket closed");
+    };
+  }
 
   //New Section for updated game frontend code with endpoint calls
 
@@ -51,6 +84,9 @@ export function Game({userName}) {
   
       const data = await response.json();
       setGameState(data.gameState);
+
+      connectToGameWebSocket(roomCode);
+
     } catch (error) {
       console.error("Error joining room:", error);
     }

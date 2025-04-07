@@ -36,7 +36,7 @@ function peerProxy(httpServer) {
             client.readyState === WebSocket.OPEN &&
             client.roomCode === socket.roomCode
           ) {
-            console.log('➡️ Sending message to a client in room:', socket.roomCode);
+            console.log('Sending message to a client in room:', socket.roomCode);
             client.send(JSON.stringify(parsed));
           }
         });
@@ -70,7 +70,7 @@ function peerProxy(httpServer) {
         return client.terminate();
       }
 
-      console.log('📡 Pinging client to check if alive');
+      console.log('Pinging client to check if alive');
       client.isAlive = false;
       client.ping();
     });
