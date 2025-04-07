@@ -21,16 +21,25 @@ export default function MainLayout({ userName }) {
 
     socketRef.current.onopen = () => {
       console.log("WebSocket connected");
+
+      socketRef.current.send(
+        JSON.stringify({
+          type: 'join',
+          roomCode: 'chat', //this will be the global roomCode that lets people chat with eachother
+        })
+      );
+      console.log("Websoket connected with roomCode: chat, I think");
     };
+
 
     // Listen for incoming messages from the WebSocket server
     socketRef.current.onmessage = async (event) => {
-      const text = await event.data.text();
-      const newMessage = JSON.parse(text);
+      const newMessage = JSON.parse(event.data);
       setMessages((prevMessages) => [...prevMessages, newMessage]);
     };
 
     return () => {
+      console.log("Closing socket...");
       if (socketRef.current) {
         socketRef.current.close();
       }
