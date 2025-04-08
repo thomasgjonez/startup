@@ -35,6 +35,8 @@ export function Game({userName}) {
     { left: "391px", top: "80px" },  // Position for score 5
     { left: "500px", top: "10px" },  // Position for score 6
   ];
+  const [hasPrompted, setHasPrompted] = useState(false);
+
 
   //websocket section
   useEffect(() => {
@@ -200,16 +202,43 @@ useEffect(() => { //this changes the tables to reflect the actual gameState
   setIsUserDescriber(currentDescriber.username === userName);
 }, [currentDescriber]);
 
-useEffect(() => {     //prompts the describer to write a response
-  if (isUserDescriber && randomWord) {
-    const userDescription = prompt(`It's your turn to describe the word "${randomWord}"! Enter your description:`);
+useEffect(() => {
+  if (isUserDescriber && randomWord && !hasPrompted) {
+    setHasPrompted(true);
 
-    if (userDescription) {
-      setDescriberResponse(userDescription);
-    }
+    const promptAndSendDescription = async () => {
+      const userDescription = prompt(`It's your turn to describe the word "${randomWord}"! Enter your description:`);
+
+      if (userDescription) {
+        try {
+          const response = await fetch('/api/game/description', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              roomCode,
+              username: userName,
+              description: userDescription,
+            }),
+          });
+
+          if (!response.ok) {
+            const errData = await response.json();
+            console.error("Failed to submit description:", errData.msg || response.statusText);
+          }
+        } catch (err) {
+          console.error("Error submitting description:", err);
+        }
+      }
+    };
+
+    promptAndSendDescription();
   }
-}, [isUserDescriber]);
+}, [isUserDescriber, randomWord, hasPrompted]);
 
+
+useEffect(() => {
+  setHasPrompted(false);
+}, [randomWord, currentDescriber]);
 
 const getBluePiecePosition = (score) => {
   return predefinedBluePositions[score];
