@@ -80,5 +80,19 @@ function peerProxy(httpServer) {
     console.error(' WebSocket Server error:', err);
   });
 }
+function broadcastToRoom(socketServer, roomCode, message, excludeSocket = null) {
+    socketServer.clients.forEach((client) => {
+      if (
+        client.readyState === WebSocket.OPEN &&
+        client.roomCode === roomCode &&
+        client !== excludeSocket
+      ) {
+        client.send(JSON.stringify(message));
+      }
+    });
+  }
 
-module.exports = { peerProxy };
+module.exports = { 
+    peerProxy,
+    getSocketServer: () => socketServer
+ };

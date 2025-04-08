@@ -3,9 +3,10 @@ const bcrypt = require('bcryptjs');
 const express = require('express');
 const uuid = require('uuid');
 const app = express();
-const { runGame, pickDescriber, startRound, compareWords, resetGame } = require('./gameHelper');
+const { runGame, pickDescriber, startRound, compareWords, resetGame, broadcastGameState } = require('./gameHelper');
 const DB = require('./database.js');
-const { peerProxy } = require('./peerProxy.js');
+const { peerProxy, getSocketServer } = require('./peerProxy.js');
+const { GameEvent } = require('../src/pages/game/gameNotifier'); 
 
 const authCookieName = 'token';
 
@@ -24,6 +25,7 @@ app.use(express.static('public'));
 
 let apiRouter = express.Router();
 app.use(`/api`, apiRouter);
+
 
 // CreateAuth a new user
 apiRouter.post('/auth/create', async (req, res) => {
@@ -100,6 +102,7 @@ apiRouter.post('/game/createOrJoinRoom', requireAuth, async (req,res) => {
         }
 
       await DB.saveGame(gameState);
+      broadcastGameState(gameState);
       
         res.status(200).send({ msg: 'Joined game', gameState });
       }catch(error){
@@ -137,6 +140,7 @@ apiRouter.post('/game/createOrJoinRoom', requireAuth, async (req,res) => {
         }
      });
       await DB.saveGame(gameState);
+      broadcastGameState(gameState);
 
       res.status(200).send({ msg: 'Teams have been set successfully', gameState });
 
@@ -225,6 +229,7 @@ apiRouter.post('/game/description', requireAuth, async (req, res) => {
   gameState.describerResponse = description;
   
   await DB.saveGame(gameState);
+  broadcastGameState(gameState);
 })
 
 apiRouter.get('/game/state', requireAuth, async(req, res) => {

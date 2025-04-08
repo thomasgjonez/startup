@@ -1,3 +1,6 @@
+const { peerProxy, getSocketServer } = require('./peerProxy.js');
+const { GameEvent } = require('../src/pages/game/gameNotifier'); 
+
 const ninjaAPIKey = 'gdUXgBuLnhEv/my9sMG25A==bJmFMklsLvLluQa2'
 const DB = require('./database');
 
@@ -16,6 +19,7 @@ function runGame(initialGameState){
           setTimeout(async() => {
           gameState.timer--;
           await DB.updateTimer(gameState.roomCode, gameState.timer);
+          broadcastGameState(gameState);
           roundLoop();
           }, 1000);
         } else {
@@ -33,6 +37,7 @@ async function startRound(gameState){//really should be named start game as it o
         console.log(`Round started. New word: ${gameState.randomWord}`);
 
         await DB.saveGame(gameState);
+        broadcastGameState(gameState);
 }
 
 async function endRound(staleState){
@@ -47,6 +52,7 @@ async function endRound(staleState){
         gameState.winCondition = true;
         console.log("Game over.");
         await DB.saveGame(gameState);
+        broadcastGameState(gameState);
         return;
       }
       gameState.wordGuessed = false;
@@ -57,7 +63,8 @@ async function endRound(staleState){
       Object.values(gameState.blueTeam).forEach(p => p.guessedWord = '');
       Object.values(gameState.greenTeam).forEach(p => p.guessedWord = '');
     
-      await DB.saveGame(gameState);
+      await DB.saveGame(gameState)
+      broadcastGameState(gameState);;
 }
 
 async function compareWords(staleGameState, guessedWord){
@@ -101,6 +108,7 @@ async function pickDescriber(gameState) {
     gameState.describerResponse = "";//this will be set with the description endpoint
     
     await DB.saveGame(gameState);
+    broadcastGameState(gameState);
   }
 
 //section for helper functions
@@ -159,9 +167,29 @@ function hardReset(gameState){
       gameState.winCondition = false;
 
       await DB.saveGame(gameState);
+      // broadcastGameState(gameState); don't think i need this one, but just in case
       console.log("Game state has been reset.");
     }
   }, 30000); 
+
+  function broadcastGameState(gameState) {
+    const socketServer = getSocketServer();
+  
+    const message = JSON.stringify({
+      from: 'server',
+      type: GameEvent.GameUpdate,
+      value: gameState,
+    });
+  
+    socketServer.clients.forEach((client) => {
+      if (
+        client.readyState === 1 && // WebSocket.OPEN === 1
+        client.roomCode === gameState.roomCode
+      ) {
+        client.send(message);
+      }
+    });
+  }
 
 }
 
@@ -172,5 +200,6 @@ function hardReset(gameState){
     startRound,
     endRound,
     runGame,
-    resetGame
+    resetGame,
+    broadcastGameState
   };
