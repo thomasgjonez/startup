@@ -1,5 +1,6 @@
 import React from 'react';
 import { useState, useEffect, useRef } from 'react';
+import { GameNotifier, GameEvent } from './gameNotifier';
 import './game.css'
 
 export function Game({userName}) {
@@ -33,39 +34,32 @@ export function Game({userName}) {
     { left: "391px", top: "80px" },  // Position for score 5
     { left: "500px", top: "10px" },  // Position for score 6
   ];
-  const socketRef = useRef(null);
 
   //websocket section
-  function connectToGameWebSocket(roomCode) {
-    if (socketRef.current && socketRef.current.readyState === WebSocket.OPEN) {
-      console.log("WebSocket already connected.");
-      return;
-    }
+  useEffect(() => {
+    if (!roomCode) return;
   
-    socketRef.current = new WebSocket('ws://localhost:4000');
-  
-    socketRef.current.onopen = () => {
-      console.log("WebSocket connected to game room:", roomCode);
-      socketRef.current.send(JSON.stringify({
-        type: 'join',
-        roomCode,
-      }));
+    const handleGameEvent = (event) => {
+      if (event.type === GameEvent.GameUpdate && event.value.roomCode === roomCode) {
+        console.log("Received game update via WebSocket:", event.value);
+        const newState = event.value;
+        setGameState(newState);
+        setBlueTeam(newState.blueTeam);
+        setGreenTeam(newState.greenTeam);
+        setTimer(newState.timer);
+        setCurrentDescriber(newState.currentDescriber);
+        setDescriberResponse(newState.describerResponse);
+        setRandomWord(newState.randomWord);
+        setBlueTeamPts(newState.blueTeamPts);
+        setGreenTeamPts(newState.greenTeamPts);
+      }
     };
   
-    socketRef.current.onmessage = (event) => {
-      const message = JSON.parse(event.data);
-      console.log("WS message:", message);
-      // Handle game update (maybe pass setGameState here if needed)
-    };
+    GameNotifier.addHandler(handleGameEvent);
+    GameNotifier.joinRoom(roomCode);
   
-    socketRef.current.onerror = (err) => {
-      console.error("WebSocket error:", err);
-    };
-  
-    socketRef.current.onclose = () => {
-      console.log("WebSocket closed");
-    };
-  }
+    return () => GameNotifier.removeHandler(handleGameEvent);
+  }, [roomCode]);
 
   //New Section for updated game frontend code with endpoint calls
 
