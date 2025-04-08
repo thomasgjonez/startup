@@ -22,8 +22,12 @@ const GameEvent = {
     }
   
     connect() {
-      console.log("Calling connect()...");
-      if (this.socket && this.socket.readyState === WebSocket.OPEN) return;
+        if (this.socket) {
+            if (this.socket.readyState === WebSocket.OPEN || this.socket.readyState === WebSocket.CONNECTING) {
+              console.log("Closing previous WebSocket connection before opening a new one.");
+              this.socket.close();
+            }
+          }
   
       const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
       const host = window.location.hostname;
