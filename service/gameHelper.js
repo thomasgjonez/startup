@@ -170,27 +170,25 @@ function hardReset(gameState){
       // broadcastGameState(gameState); don't think i need this one, but just in case
       console.log("Game state has been reset.");
     }
-  }, 30000); 
+  }, 30000);
+}
+function broadcastGameState(gameState) {
+  const socketServer = getSocketServer();
 
-  function broadcastGameState(gameState) {
-    const socketServer = getSocketServer();
-  
-    const message = JSON.stringify({
-      from: 'server',
-      type: GameEvent.GameUpdate,
-      value: gameState,
-    });
-  
-    socketServer.clients.forEach((client) => {
-      if (
-        client.readyState === 1 && // WebSocket.OPEN === 1
-        client.roomCode === gameState.roomCode
-      ) {
-        client.send(message);
-      }
-    });
-  }
+  const message = JSON.stringify({
+    from: 'server',
+    type: GameEvent.GameUpdate,
+    value: gameState,
+  });
 
+  socketServer.clients.forEach((client) => {
+    if (
+      client.readyState === 1 && // WebSocket.OPEN
+      client.roomCode === gameState.roomCode
+    ) {
+      client.send(message);
+    }
+  });
 }
 
   module.exports = {

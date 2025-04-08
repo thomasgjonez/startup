@@ -215,42 +215,29 @@ const getGreenPiecePosition = (score) => {
 };
 
 
-  useEffect(() => { //updates local variables with actual results
-    const fetchGameState = async () => {
-      try {
-        const response = await fetch(`/api/game/state?roomCode=${roomCode}`, {
-          method: 'GET',
-          headers: { 'Content-Type': 'application/json' }
-        });
+useEffect(() => {
+  if (!roomCode) return;
 
-        if (!response.ok) {
-          throw new Error(`Server error: ${response.status}`);
-        }
+  const fetchInitialGameState = async () => {
+    try {
+      const response = await fetch(`/api/game/state?roomCode=${roomCode}`);
+      const data = await response.json();
+      setGameState(data);
+      setBlueTeam(data.blueTeam || {});
+      setGreenTeam(data.greenTeam || {});
+      setTimer(data.timer);
+      setDescriberResponse(data.describerResponse || "");
+      setRandomWord(data.randomWord);
+      setCurrentDescriber(data.currentDescriber);
+      setBlueTeamPts(data.blueTeamPts);
+      setGreenTeamPts(data.greenTeamPts);
+    } catch (error) {
+      console.error("Error fetching initial game state:", error);
+    }
+  };
 
-        const data = await response.json();
-  
-        if (data) {
-          setGameState(data);
-          setBlueTeam(data.blueTeam || {}); 
-          setGreenTeam(data.greenTeam || {});
-          setTimer(data.timer);
-          if (data.describerResponse && data.describerResponse !== "") {
-            setDescriberResponse(data.describerResponse);
-          }
-          setRandomWord(data.randomWord);
-          setCurrentDescriber(data.currentDescriber);
-          setBlueTeamPts(data.blueTeamPts);
-          setGreenTeamPts(data.greenTeamPts);
-        }
-      } catch (error) {
-        console.error("Error fetching game state:", error);
-      }
-    };
-  
-    const interval = setInterval(fetchGameState, 3000);
-  
-    return () => clearInterval(interval);
-  }, [roomCode]);
+  fetchInitialGameState();
+}, [roomCode]);
 
 
   useEffect(() => {
