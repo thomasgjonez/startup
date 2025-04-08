@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef} from 'react';
 import { Outlet } from 'react-router-dom';
 import { NavLink } from 'react-router-dom';
+import { GameEvent, GameNotifier } from '../pages/game/gameNotifier';
 
 import "./main.css"
 
@@ -9,40 +10,17 @@ export default function MainLayout({ userName }) {
   const [inputMessage, setInputMessage] = useState("");
   const chatBoxRef = useRef(null);
 
-  // Set up the WebSocket connection
-  const socketRef = useRef(null);
-
-  // Connect to the WebSocket server
   useEffect(() => {
-    // let port = window.location.port;
-    // const protocol = window.location.protocol === 'http:' ? 'ws' : 'wss';
-    // this.socket = new WebSocket(`${protocol}://${window.location.hostname}:${port}/ws`);
-    socketRef.current = new WebSocket('ws://localhost:4000');
-
-    socketRef.current.onopen = () => {
-      console.log("WebSocket connected");
-
-      socketRef.current.send(
-        JSON.stringify({
-          type: 'join',
-          roomCode: 'chat', //this will be the global roomCode that lets people chat with eachother
-        })
-      );
-      console.log("Websoket connected with roomCode: chat, I think");
-    };
-
-
-    // Listen for incoming messages from the WebSocket server
-    socketRef.current.onmessage = async (event) => {
-      const newMessage = JSON.parse(event.data);
-      setMessages((prevMessages) => [...prevMessages, newMessage]);
-    };
-
-    return () => {
-      console.log("Closing socket...");
-      if (socketRef.current) {
-        socketRef.current.close();
+    const handleChatEvent = (event) => {
+      if (event.type === GameEvent.Chat) {
+        setMessages((prevMessages) => [...prevMessages, event.value]);
       }
+    };
+  
+    GameNotifier.addHandler(handleChatEvent);
+  
+    return () => {
+      GameNotifier.removeHandler(handleChatEvent);
     };
   }, []);
 
