@@ -170,7 +170,7 @@ function hardReset(gameState){
       // broadcastGameState(gameState); don't think i need this one, but just in case
       console.log("Game state has been reset.");
     }
-  }, 30000);
+  }, 15000);
 }
 function broadcastGameState(gameState) {
   const socketServer = getSocketServer();

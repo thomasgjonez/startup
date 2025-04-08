@@ -4,6 +4,7 @@ import { GameNotifier, GameEvent } from './gameNotifier';
 import './game.css'
 
 export function Game({userName}) {
+  const roomCodeInputRef = useRef(null);
   const [gameState, setGameState] = useState(null);
   const [roomCode, setRoomCode] = useState("");
   const [timer, setTimer] = useState();
@@ -64,11 +65,15 @@ export function Game({userName}) {
 
   const joinRoom = async (e) => {
     e.preventDefault();
+
+    const submittedRoomCode = roomCodeInputRef.current.value.trim();
+    setRoomCode(submittedRoomCode);
+
     try {
       const response = await fetch('/api/game/createOrJoinRoom', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ roomCode, username: userName }),
+        body: JSON.stringify({ roomCode:submittedRoomCode, username: userName }),
       });
   
       if (!response.ok) {
@@ -78,7 +83,7 @@ export function Game({userName}) {
       const data = await response.json();
       setGameState(data.gameState);
 
-      GameNotifier.joinRoom(roomCode);
+      GameNotifier.joinRoom(submittedRoomCode);
 
     } catch (error) {
       console.error("Error joining room:", error);
@@ -196,7 +201,7 @@ useEffect(() => { //this changes the tables to reflect the actual gameState
 }, [currentDescriber]);
 
 useEffect(() => {     //prompts the describer to write a response
-  if (isUserDescriber) {
+  if (isUserDescriber && randomWord) {
     const userDescription = prompt(`It's your turn to describe the word "${randomWord}"! Enter your description:`);
 
     if (userDescription) {
@@ -303,8 +308,8 @@ useEffect(() => {
               id="room-code"
               className="form-control me-2"
               placeholder="Enter Room Code"
-              value={roomCode}
-              onChange={(e) => setRoomCode(e.target.value)}
+              ref={roomCodeInputRef}
+              defaultValue=""
             /> 
             <button type="submit" className="btn btn-outline-secondary h-50 py-0">Join Room</button>
             </div>

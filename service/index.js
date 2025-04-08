@@ -164,8 +164,8 @@ apiRouter.post('/game/start', requireAuth, async (req, res) => {
 
   try {
     resetGame(gameState);
-    await pickDescriber(gameState);
     await startRound(gameState);
+    await pickDescriber(gameState);
     await runGame(gameState);
 
     res.status(200).send({ msg: `Game started for room ${roomCode}`, gameState });

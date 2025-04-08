@@ -60,7 +60,7 @@ function peerProxy(httpServer) {
     // Respond to ping/pong to keep connection alive
     socket.on('pong', () => {
       socket.isAlive = true;
-      console.log('Pong received from client');
+      //console.log('Pong received from client');
     });
   });
 
@@ -72,7 +72,7 @@ function peerProxy(httpServer) {
         return client.terminate();
       }
 
-      console.log('Pinging client to check if alive');
+      //console.log('Pinging client to check if alive');
       client.isAlive = false;
       client.ping();
     });
