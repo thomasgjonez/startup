@@ -56,7 +56,6 @@ export function Game({userName}) {
     };
   
     GameNotifier.addHandler(handleGameEvent);
-    GameNotifier.joinRoom(roomCode);
   
     return () => GameNotifier.removeHandler(handleGameEvent);
   }, [roomCode]);
@@ -79,7 +78,7 @@ export function Game({userName}) {
       const data = await response.json();
       setGameState(data.gameState);
 
-      connectToGameWebSocket(roomCode);
+      GameNotifier.joinRoom(roomCode);
 
     } catch (error) {
       console.error("Error joining room:", error);

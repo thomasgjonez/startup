@@ -24,22 +24,17 @@ export default function MainLayout({ userName }) {
     };
   }, []);
 
-const addMessage = async () => {
-  if (!inputMessage.trim()) return;
-
-  const message = {
-    username: userName,
-    message: inputMessage,
-    type: 'chat',
-  };
-
-  // Send the message to WebSocket server
-  socketRef.current.send(JSON.stringify(message));
-
-  //adds message so that the user who sent it can see it too
-  setMessages((prevMessages) => [...prevMessages, message]);
-
-  setInputMessage("");
+  const addMessage = () => {
+    if (!inputMessage.trim()) return;
+  
+    const chatMessage = {
+      username: userName,
+      message: inputMessage,
+    };
+  
+    GameNotifier.broadcastEvent(userName, GameEvent.Chat, chatMessage);
+    setMessages((prevMessages) => [...prevMessages, chatMessage]);
+    setInputMessage("");
   };
 
   useEffect(() => {

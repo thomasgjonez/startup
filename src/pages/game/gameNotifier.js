@@ -1,5 +1,7 @@
 const GameEvent = {
     System: 'system',
+    GameStart: 'gameStart',
+    GameEnd: 'gameEnd',
     GameUpdate: 'gameUpdate',
     Chat: 'chat',
   };
@@ -20,12 +22,16 @@ const GameEvent = {
     }
   
     connect() {
+      console.log("Calling connect()...");
       if (this.socket && this.socket.readyState === WebSocket.OPEN) return;
   
       const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
       const host = window.location.hostname;
-      const port = window.location.port;
-      this.socket = new WebSocket(`${protocol}://${host}:${port}`);
+    //   const port = window.location.port;
+    //   console.log(`Connecting to: ${protocol}://${host}:${port}`);
+    //   this.socket = new WebSocket(`${protocol}://${host}:${port}`);
+      const backendPort = 4000;// this is temp and hardcoded
+      this.socket = new WebSocket(`${protocol}://${host}:${backendPort}`);
   
       this.socket.onopen = () => {
         console.log("WS Connected");
