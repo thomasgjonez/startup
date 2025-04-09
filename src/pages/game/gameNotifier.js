@@ -31,11 +31,11 @@ const GameEvent = {
   
       const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
       const host = window.location.hostname;
-    //   const port = window.location.port;
-    //   console.log(`Connecting to: ${protocol}://${host}:${port}`);
-    //   this.socket = new WebSocket(`${protocol}://${host}:${port}`);
-      const backendPort = 4000;// this is temp and hardcoded
-      this.socket = new WebSocket(`${protocol}://${host}:${backendPort}`);
+      let port = window.location.port;
+      console.log(`Connecting to: ${protocol}://${host}:${port}`);
+      this.socket = new WebSocket(`${protocol}://${host}:${port}/ws`);
+    //   const backendPort = 4000;// this is temp and hardcoded
+    //   this.socket = new WebSocket(`${protocol}://${host}:${backendPort}`);
   
       this.socket.onopen = () => {
         console.log("WS Connected");
