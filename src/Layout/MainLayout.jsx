@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef} from 'react';
 import { Outlet } from 'react-router-dom';
 import { NavLink } from 'react-router-dom';
-import { GameEvent, GameNotifier } from '../pages/game/gameNotifier';
+import { GameNotifier } from '../pages/game/gameNotifier';
+import { GameEvent } from '../../shared/GameEvent';
 
 import "./main.css"
 

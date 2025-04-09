@@ -6,7 +6,7 @@ const app = express();
 const { runGame, pickDescriber, startRound, compareWords, resetGame, broadcastGameState } = require('./gameHelper');
 const DB = require('./database.js');
 const { peerProxy, getSocketServer } = require('./peerProxy.js');
-const { GameEvent } = require('../src/pages/game/gameNotifier'); 
+const { GameEvent } = require('./shared/GameEvent'); 
 
 const authCookieName = 'token';
 

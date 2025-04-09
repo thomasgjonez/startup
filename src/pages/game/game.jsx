@@ -1,6 +1,7 @@
 import React from 'react';
 import { useState, useEffect, useRef } from 'react';
-import { GameNotifier, GameEvent } from './gameNotifier';
+import { GameNotifier} from './gameNotifier';
+import { GameEvent, EventMessage } from '../../../shared/GameEvent';
 import './game.css'
 
 export function Game({userName}) {

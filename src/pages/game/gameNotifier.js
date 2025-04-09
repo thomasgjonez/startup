@@ -1,18 +1,4 @@
-const GameEvent = {
-    System: 'system',
-    GameStart: 'gameStart',
-    GameEnd: 'gameEnd',
-    GameUpdate: 'gameUpdate',
-    Chat: 'chat',
-  };
-  
-  class EventMessage {
-    constructor(from, type, value) {
-      this.from = from;
-      this.type = type;
-      this.value = value;
-    }
-  }
+import { GameEvent, EventMessage } from '../../../shared/GameEvent';
   
   class GameEventNotifier {
     constructor() {
@@ -29,11 +15,20 @@ const GameEvent = {
             }
           }
   
-      const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
-      const host = window.location.hostname;
-      let port = window.location.port;
-      console.log(`Connecting to: ${protocol}://${host}:${port}`);
-      this.socket = new WebSocket(`${protocol}://${host}:${port}/ws`);
+          const protocol = window.location.protocol === 'https:' ? 'wss' : 'ws';
+          const host = window.location.hostname;
+          const port = window.location.port;
+          
+          // Use port only in dev mode (localhost:5173)
+          const socketURL = host === 'localhost'
+            ? `${protocol}://${host}:${port}/ws`
+            : `${protocol}://${host}/ws`;
+          
+          console.log(`Connecting to WebSocket at: ${socketURL}`);
+          this.socket = new WebSocket(socketURL);
+    //   let port = window.location.port;
+    //   console.log(`Connecting to: ${protocol}://${host}:${port}`);
+    //   this.socket = new WebSocket(`${protocol}://${host}:${port}/ws`);
     //   const backendPort = 4000;// this is temp and hardcoded
     //   this.socket = new WebSocket(`${protocol}://${host}:${backendPort}`);
   

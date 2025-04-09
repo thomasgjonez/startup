@@ -19,3 +19,8 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor i
 ### General Notes
 
 During the github excercise I learned how to synch changes made between terminal, vscode, and the online version.
+
+
+### Deploying to prod
+
+Sometimes the json packages/dependcies don't carry over so you have to install it on the machine through ssh ing in. Also some paths might not line up right in dev since they are meant for prod. Only the ones relating to the shared folder/gameEvent.js with the websocket.

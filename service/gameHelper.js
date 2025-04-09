@@ -1,5 +1,5 @@
 const { peerProxy, getSocketServer } = require('./peerProxy.js');
-const { GameEvent } = require('../src/pages/game/gameNotifier'); 
+const { GameEvent } = require('./shared/GameEvent'); 
 
 const ninjaAPIKey = 'gdUXgBuLnhEv/my9sMG25A==bJmFMklsLvLluQa2'
 const DB = require('./database');
