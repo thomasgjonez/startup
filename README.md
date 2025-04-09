@@ -164,8 +164,8 @@ For this deliverable I did the following. I checked the box `[x]` and added a de
 
 For this deliverable I did the following. I checked the box `[x]` and added a description for things I completed.
 
-- [ ] **Backend listens for WebSocket connection** - I did not complete this part of the deliverable.
-- [ ] **Frontend makes WebSocket connection** - I did not complete this part of the deliverable.
-- [ ] **Data sent over WebSocket connection** - I did not complete this part of the deliverable.
-- [ ] **WebSocket data displayed** - I did not complete this part of the deliverable.
-- [ ] **Application is fully functional** - I did not complete this part of the deliverable.
+- [x] **Backend listens for WebSocket connection** - I created a WebSocket server using ws in peerProxy.js that listens for connections and handles messages.
+- [x] **Frontend makes WebSocket connection** - I established a WebSocket connection from the frontend using GameNotifier.connect() and join a room using GameNotifier.joinRoom().
+- [x] **Data sent over WebSocket connection** - Functions gameNotifier.broadcastEvent() and notifyDescriber() broadcast gameState updates like randomWord, Timer, describer, teams etc to each user in a ws connection. Also have a live chat 
+- [x] **WebSocket data displayed** - in game.jsx I used UseEffects that listen for changes/broadcasted data sent over in ws connections, which then updates the UI
+- [x] **Application is fully functional** - The game runs completly, with authorization, endpoints, websocket connections, databases. Overall it runs good, but gameplay can be a bit glitchy especailly with UI changes.
