@@ -56,13 +56,31 @@ export function Game({userName}) {
         setBlueTeamPts(newState.blueTeamPts);
         setGreenTeamPts(newState.greenTeamPts);
       }
+  
+      if (event.type === GameEvent.DescriberSelected && event.value.describer === userName) {
+        const { randomWord } = event.value;
+        const description = prompt(`It's your turn to describe the word "${randomWord}"! Enter your description:`);
+  
+        if (description) {
+          fetch('/api/game/description', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              roomCode,
+              username: userName,
+              description,
+            }),
+          }).catch((err) => {
+            console.error("Failed to submit description:", err);
+          });
+        }
+      }
     };
   
     GameNotifier.addHandler(handleGameEvent);
-  
     return () => GameNotifier.removeHandler(handleGameEvent);
-  }, [roomCode]);
-
+  }, [roomCode, userName]);
+  
   //New Section for updated game frontend code with endpoint calls
 
   const joinRoom = async (e) => {
@@ -85,7 +103,7 @@ export function Game({userName}) {
       const data = await response.json();
       setGameState(data.gameState);
 
-      GameNotifier.joinRoom(submittedRoomCode);
+      GameNotifier.joinRoom(submittedRoomCode, userName);
 
     } catch (error) {
       console.error("Error joining room:", error);
@@ -202,43 +220,46 @@ useEffect(() => { //this changes the tables to reflect the actual gameState
   setIsUserDescriber(currentDescriber.username === userName);
 }, [currentDescriber]);
 
-useEffect(() => {
-  if (isUserDescriber && randomWord && !hasPrompted) {
-    setHasPrompted(true);
+const lastPromptKeyRef = useRef("");
 
-    const promptAndSendDescription = async () => {
-      const userDescription = prompt(`It's your turn to describe the word "${randomWord}"! Enter your description:`);
+// useEffect(() => {
+//   const key = `${currentDescriber?.username}_${randomWord}`;
+//   if (isUserDescriber && randomWord && key !== lastPromptKeyRef.current) {
+//     lastPromptKeyRef.current = key;
 
-      if (userDescription) {
-        try {
-          const response = await fetch('/api/game/description', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              roomCode,
-              username: userName,
-              description: userDescription,
-            }),
-          });
+//     const promptAndSendDescription = async () => {
+//       const userDescription = prompt(`It's your turn to describe the word "${randomWord}"! Enter your description:`);
 
-          if (!response.ok) {
-            const errData = await response.json();
-            console.error("Failed to submit description:", errData.msg || response.statusText);
-          }
-        } catch (err) {
-          console.error("Error submitting description:", err);
-        }
-      }
-    };
+//       if (userDescription) {
+//         try {
+//           const response = await fetch('/api/game/description', {
+//             method: 'POST',
+//             headers: { 'Content-Type': 'application/json' },
+//             body: JSON.stringify({
+//               roomCode,
+//               username: userName,
+//               description: userDescription,
+//             }),
+//           });
 
-    promptAndSendDescription();
-  }
-}, [isUserDescriber, randomWord, hasPrompted]);
+//           if (!response.ok) {
+//             const errData = await response.json();
+//             console.error("Failed to submit description:", errData.msg || response.statusText);
+//           }
+//         } catch (err) {
+//           console.error("Error submitting description:", err);
+//         }
+//       }
+//     };
+
+//     promptAndSendDescription();
+//   }
+// }, [isUserDescriber, randomWord, currentDescriber?.username]);
 
 
-useEffect(() => {
-  setHasPrompted(false);
-}, [randomWord, currentDescriber]);
+// useEffect(() => {
+//   setHasPrompted(false);
+// }, [randomWord, currentDescriber]);
 
 const getBluePiecePosition = (score) => {
   return predefinedBluePositions[score];

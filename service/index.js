@@ -164,8 +164,6 @@ apiRouter.post('/game/start', requireAuth, async (req, res) => {
 
   try {
     resetGame(gameState);
-    await startRound(gameState);
-    await pickDescriber(gameState);
     await runGame(gameState);
 
     res.status(200).send({ msg: `Game started for room ${roomCode}`, gameState });
@@ -206,8 +204,9 @@ apiRouter.post('/game/guessWord', requireAuth, async (req, res) => {
       console.log(`Updated guessed word for ${username}: ${guessedWord}`);
 
       await compareWords(gameState, guessedWord);
-
-      res.status(200).send({ msg: 'Guess submitted successfully', gameState });
+      const updatedGameState = await DB.getGame(roomCode);
+      broadcastGameState(updatedGameState);
+      res.status(200).send({ msg: 'Guess submitted successfully', updatedGameState });
   } catch (error) {
       console.error("Error processing guess:", error);
       res.status(500).send({ msg: 'Internal Server Error' });

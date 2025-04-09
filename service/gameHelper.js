@@ -109,6 +109,7 @@ async function pickDescriber(gameState) {
     
     await DB.saveGame(gameState);
     broadcastGameState(gameState);
+    notifyDescriber(gameState);
   }
 
 //section for helper functions
@@ -167,7 +168,7 @@ function hardReset(gameState){
       gameState.winCondition = false;
 
       await DB.saveGame(gameState);
-      // broadcastGameState(gameState); don't think i need this one, but just in case
+      broadcastGameState(gameState);
       console.log("Game state has been reset.");
     }
   }, 15000);
@@ -190,6 +191,31 @@ function broadcastGameState(gameState) {
     }
   });
 }
+function notifyDescriber(gameState) {
+  const socketServer = getSocketServer();
+  const currentDescriberUsername = gameState.currentDescriber?.username;
+
+  if (!currentDescriberUsername) return;
+
+  const message = JSON.stringify({
+    type: GameEvent.DescriberSelected,
+    value: {
+      roomCode: gameState.roomCode,
+      randomWord: gameState.randomWord,
+      describer: currentDescriberUsername,
+    },
+  });
+
+  socketServer.clients.forEach((client) => {
+    if (
+      client.readyState === 1 &&
+      client.roomCode === gameState.roomCode &&
+      client.username === currentDescriberUsername
+    ) {
+      client.send(message);
+    }
+  });
+}
 
   module.exports = {
     getRandomWord,
@@ -199,5 +225,6 @@ function broadcastGameState(gameState) {
     endRound,
     runGame,
     resetGame,
-    broadcastGameState
+    broadcastGameState,
+    notifyDescriber
   };

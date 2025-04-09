@@ -21,6 +21,7 @@ function peerProxy(httpServer) {
         // Handle joining a room
         if (parsed.type === 'join') {
           socket.roomCode = parsed.roomCode;
+          socket.username = parsed.username;
           console.log(`Client joined room: ${parsed.roomCode}`);
           return;
         }

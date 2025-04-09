@@ -43,6 +43,7 @@ const GameEvent = {
           this.send({
             type: 'join',
             roomCode: this.roomCode,
+            username: this.username,
           });
         }
       };
@@ -65,14 +66,17 @@ const GameEvent = {
       };
     }
   
-    joinRoom(roomCode) {
+    joinRoom(roomCode, username) {
       this.roomCode = roomCode;
+      this.username = username;
       this.connect();
   
       if (this.socket.readyState === WebSocket.OPEN) {
         this.send({
           type: 'join',
           roomCode: this.roomCode,
+          username: this.username,
+
         });
       }
     }
